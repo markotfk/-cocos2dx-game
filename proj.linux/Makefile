@@ -5,7 +5,7 @@ SOURCES = main.cpp \
         ../Classes/HelloWorldScene.cpp \
         ../Classes/GameOverScene.cpp
 
-COCOS_ROOT = ../../../
+COCOS_ROOT = ../../..
 INCLUDES = -I../Classes -I$(COCOS_ROOT)/cocos2dx/include
 
 include $(COCOS_ROOT)/cocos2dx/proj.linux/cocos2dx.mk
