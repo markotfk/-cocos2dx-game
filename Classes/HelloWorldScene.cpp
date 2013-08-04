@@ -92,7 +92,7 @@ bool HelloWorld::init()
 
 		/////////////////////////////
 		// 2. add your codes below...
-		CCSprite *player = CCSprite::create("Player.png", CCRectMake(0, 0, 27, 40) );
+		CCSprite *player = CCSprite::create("car.png", CCRectMake(0, 0, 45, 28) );
         
 		player->setPosition( ccp(origin.x + player->getContentSize().width/2,
                                  origin.y + visibleSize.height/2) );
@@ -199,7 +199,7 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	// Set up initial location of projectile
 	CCSize winSize = CCDirector::sharedDirector()->getVisibleSize();
     CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
-	CCSprite *projectile = CCSprite::create("Projectile.png", CCRectMake(0, 0, 20, 20));
+	CCSprite *projectile = CCSprite::create("Projectile.png", CCRectMake(0, 0, 7, 18));
 	projectile->setPosition( ccp(origin.x+20, origin.y+winSize.height/2) );
 
 	// Determinie offset of location to projectile
