@@ -5,13 +5,12 @@ SOURCES = main.cpp \
         ../Classes/HelloWorldScene.cpp \
         ../Classes/GameOverScene.cpp
 
-COCOS_ROOT = /home/mtfk/dev/cocos2dx/cocos2d-x-2.1.4
+COCOS_ROOT = ../../../
 INCLUDES = -I../Classes -I$(COCOS_ROOT)/cocos2dx/include
 
 include $(COCOS_ROOT)/cocos2dx/proj.linux/cocos2dx.mk
 
-SHAREDLIBS += -lcocos2d
-SHAREDLIBS += -lcocosdenshion
+SHAREDLIBS += -lcocos2d -lcocosdenshion
 COCOS_LIBS = $(LIB_DIR)/libcocos2d.so
 COCOS_LIBS += $(LIB_DIR)/libcocosdenshion.so
 

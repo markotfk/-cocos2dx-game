@@ -59,7 +59,7 @@ bool HelloWorld::init()
 		// super init first
 		//////////////////////////////////////////////////////////////////////////
 
-		CC_BREAK_IF(! CCLayerColor::initWithColor( ccc4(255,255,255,255) ) );
+		CC_BREAK_IF(! CCLayerColor::initWithColor( ccc4(25,25,25,25) ) );
 
 		//////////////////////////////////////////////////////////////////////////
 		// add your codes below...
