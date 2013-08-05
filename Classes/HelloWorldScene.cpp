@@ -88,7 +88,7 @@ bool HelloWorld::init()
 		CC_BREAK_IF(! pMenu);
 
 		// Add the menu to HelloWorld layer as a child layer.
-		this->addChild(pMenu, 1);
+		addChild(pMenu, 1);
 
 		/////////////////////////////
 		// 2. add your codes below...
@@ -96,18 +96,17 @@ bool HelloWorld::init()
         
 		player->setPosition( ccp(origin.x + player->getContentSize().width/2,
                                  origin.y + visibleSize.height/2) );
-		this->addChild(player);
+		addChild(player);
 
-		this->schedule( schedule_selector(HelloWorld::gameLogic), 1.0 );
-
-		this->setTouchEnabled(true);
+		schedule( schedule_selector(HelloWorld::gameLogic), 1.0 );
+		setTouchEnabled(true);
 
 		_targets = new CCArray;
 		_projectiles = new CCArray;
 
 		// use updateGame instead of update, otherwise it will conflit with SelectorProtocol::update
 		// see http://www.cocos2d-x.org/boards/6/topics/1478
-		this->schedule( schedule_selector(HelloWorld::updateGame) );
+		schedule( schedule_selector(HelloWorld::updateGame) );
 
 		CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("background-music-aac.wav", true);
 
@@ -141,7 +140,7 @@ void HelloWorld::addTarget()
 	target->setPosition( 
 		ccp(winSize.width + (target->getContentSize().width/2), 
             CCDirector::sharedDirector()->getVisibleOrigin().y + actualY) );
-	this->addChild(target);
+	addChild(target);
 
 	// Determine speed of the target
 	int minDuration = (int)2.0;
@@ -165,7 +164,7 @@ void HelloWorld::addTarget()
 void HelloWorld::spriteMoveFinished(CCNode* sender)
 {
 	CCSprite *sprite = (CCSprite *)sender;
-	this->removeChild(sprite, true);
+	removeChild(sprite, true);
 
 	if (sprite->getTag() == 1)  // target
 	{
@@ -184,7 +183,7 @@ void HelloWorld::spriteMoveFinished(CCNode* sender)
 
 void HelloWorld::gameLogic(float dt)
 {
-	this->addTarget();
+	addTarget();
 }
 
 // cpp with cocos2d-x
@@ -202,7 +201,7 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	CCSprite *projectile = CCSprite::create("Projectile.png", CCRectMake(0, 0, 7, 18));
 	projectile->setPosition( ccp(origin.x+20, origin.y+winSize.height/2) );
 
-	// Determinie offset of location to projectile
+	// Determine offset of location to projectile
 	float offX = location.x - projectile->getPosition().x;
 	float offY = location.y - projectile->getPosition().y;
 
@@ -210,7 +209,7 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	if (offX <= 0) return;
 
 	// Ok to add now - we've double checked position
-	this->addChild(projectile);
+	addChild(projectile);
 
 	// Determine where we wish to shoot the projectile to
 	float realX = origin.x+winSize.width + (projectile->getContentSize().width/2);
@@ -279,7 +278,7 @@ void HelloWorld::updateGame(float dt)
 		{
 			CCSprite *target = dynamic_cast<CCSprite*>(jt);
 			_targets->removeObject(target);
-			this->removeChild(target, true);
+			removeChild(target, true);
 
 			_projectilesDestroyed++;
 			if (_projectilesDestroyed >= 5)
@@ -302,7 +301,7 @@ void HelloWorld::updateGame(float dt)
 	{
 		CCSprite* projectile = dynamic_cast<CCSprite*>(it);
 		_projectiles->removeObject(projectile);
-		this->removeChild(projectile, true);
+		removeChild(projectile, true);
 	}
 	projectilesToDelete->release();
 }

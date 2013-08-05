@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 #include "GameOverScene.h"
-#include "HelloWorldScene.h"
+#include "TrackScene.h"
 
 using namespace cocos2d;
 
@@ -56,16 +56,16 @@ GameOverScene::~GameOverScene()
 
 bool GameOverLayer::init()
 {
-	if ( CCLayerColor::initWithColor( ccc4(255,255,255,255) ) )
+	if ( CCLayerColor::initWithColor( ccc4(5,5,5,55) ) )
 	{
 		CCSize winSize = CCDirector::sharedDirector()->getWinSize();
 		this->_label = CCLabelTTF::create("","Artial", 32);
 		_label->retain();
-		_label->setColor( ccc3(0, 0, 0) );
+		_label->setColor( ccc3(255, 255, 255) );
 		_label->setPosition( ccp(winSize.width/2, winSize.height/2) );
-		this->addChild(_label);
+		addChild(_label);
 		
-		this->runAction( CCSequence::create(
+		runAction( CCSequence::create(
                                 CCDelayTime::create(3),
                                 CCCallFunc::create(this, 
                                 callfunc_selector(GameOverLayer::gameOverDone)),
@@ -81,7 +81,7 @@ bool GameOverLayer::init()
 
 void GameOverLayer::gameOverDone()
 {
-	CCDirector::sharedDirector()->replaceScene( HelloWorld::scene() );
+	CCDirector::sharedDirector()->replaceScene( TrackScene::scene() );
 }
 
 GameOverLayer::~GameOverLayer()

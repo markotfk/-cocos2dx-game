@@ -1,5 +1,6 @@
+#include "SimpleAudioEngine.h"
 #include "AppDelegate.h"
-#include "HelloWorldScene.h"
+#include "TrackScene.h"
 
 USING_NS_CC;
 
@@ -19,33 +20,15 @@ bool AppDelegate::applicationDidFinishLaunching() {
     pDirector->setOpenGLView(CCEGLView::sharedOpenGLView());
     
     CCSize screenSize = CCEGLView::sharedOpenGLView()->getFrameSize();
-    CCSize designSize = CCSizeMake(480, 320);
-    std::vector<std::string> searchPaths;
-    
-    if (screenSize.height > 320)
-    {
-        searchPaths.push_back("hd");
-        searchPaths.push_back("sd");
-        pDirector->setContentScaleFactor(640.0f/designSize.height);
-    }
-    else
-    {
-        searchPaths.push_back("sd");
-        pDirector->setContentScaleFactor(320.0f/designSize.height);
-    }
-    
-    CCFileUtils::sharedFileUtils()->setSearchPaths(searchPaths);
+    CCSize designSize = CCSizeMake(1680, 1050);
     
     CCEGLView::sharedOpenGLView()->setDesignResolutionSize(designSize.width, designSize.height, kResolutionNoBorder);
-
-    // turn on display FPS
-    pDirector->setDisplayStats(true);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     pDirector->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    CCScene *pScene = HelloWorld::scene();
+    CCScene *pScene = TrackScene::scene();
 
     // run
     pDirector->runWithScene(pScene);
@@ -57,14 +40,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
 void AppDelegate::applicationDidEnterBackground() {
     CCDirector::sharedDirector()->stopAnimation();
 
-    // if you use SimpleAudioEngine, it must be pause
-    // CocosDenshion::SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
+    CocosDenshion::SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
 void AppDelegate::applicationWillEnterForeground() {
     CCDirector::sharedDirector()->startAnimation();
 
-    // if you use SimpleAudioEngine, it must resume here
-    // CocosDenshion::SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
+    CocosDenshion::SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
 }

@@ -2,8 +2,8 @@ EXECUTABLE = rally
 
 SOURCES = main.cpp \
         ../Classes/AppDelegate.cpp \
-        ../Classes/HelloWorldScene.cpp \
-        ../Classes/GameOverScene.cpp
+        ../Classes/GameOverScene.cpp \
+        ../Classes/TrackScene.cpp
 
 COCOS_ROOT = ../../..
 INCLUDES = -I../Classes -I$(COCOS_ROOT)/cocos2dx/include
