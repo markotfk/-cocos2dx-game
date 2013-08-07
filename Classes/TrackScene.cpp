@@ -27,13 +27,12 @@ cocos2d::CCScene* TrackScene::scene()
 	return scene;
 }
 
-TrackScene::TrackScene() {
+TrackScene::TrackScene() : player(NULL){
 
 
 }
 
 TrackScene::~TrackScene() {
-
 }
 
 /// Initialize the track scene
@@ -61,10 +60,13 @@ bool TrackScene::init()
 		CC_BREAK_IF(! pMenu);
 		pMenu->setPosition(CCPointZero);
 
+		setTouchEnabled(true);
+
 		// Add the menu as a child layer.
 		addChild(pMenu, 1);
 
-		CCSprite *player = CCSprite::create("car.png", CCRectMake(0, 0, 75, 30) );
+		player = CCSprite::create("car.png", CCRectMake(0, 0, 75, 30) );
+		CC_BREAK_IF(! player);
 
 		player->setPosition( ccp(origin.x + visibleSize.width/2,
 								 origin.y + visibleSize.height/2) );
@@ -83,9 +85,54 @@ bool TrackScene::init()
 void TrackScene::menuCloseCallback(CCObject* pSender)
 {
 	CCDirector::sharedDirector()->end();
+	exit(0);
 }
 
 void TrackScene::updateGame(float dt)
 {
-
 }
+
+
+void TrackScene::spriteMoveFinished(CCNode* sender)
+{
+}
+
+void TrackScene::ccTouchesBegan(Set *touches, CCEvent *event)
+{
+	CCTouch* touch = (CCTouch*)( touches->anyObject() );
+	CCPoint location = touch->getLocation();
+
+	float angleDegrees = CC_RADIANS_TO_DEGREES(player->getPosition().getAngle(location));
+	player->setRotation(angleDegrees);
+	player->runAction( CCSequence::create(
+				CCMoveTo::create(2.0, location),
+				CCCallFuncN::create(this,
+		                            callfuncN_selector(TrackScene::spriteMoveFinished)),
+		        NULL) );
+}
+
+void TrackScene::ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event)
+{
+	CCTouch* touch = (CCTouch*)( touches->anyObject() );
+	CCPoint location = touch->getLocation();
+	float angleDegrees = CC_RADIANS_TO_DEGREES(player->getPosition().getAngle(location));
+	player->setRotation(angleDegrees);
+	player->stopAllActions();
+	player->runAction( CCSequence::create(
+					CCMoveTo::create(2.0, location),
+					CCCallFuncN::create(this,
+			                            callfuncN_selector(TrackScene::spriteMoveFinished)),
+			        NULL) );
+}
+
+void TrackScene::ccTouchesEnded(Set* touches, CCEvent* event)
+{
+	player->stopAllActions();
+}
+
+void TrackScene::registerWithTouchDispatcher()
+{
+	CCDirector::sharedDirector()->getTouchDispatcher()->addStandardDelegate(this,0);
+}
+
+

@@ -24,6 +24,14 @@ public:
 
 	void updateGame(float dt);
 
+	void addTarget();
+	void spriteMoveFinished(cocos2d::CCNode* sender);
+	void registerWithTouchDispatcher();
+	void ccTouchesEnded(cocos2d::Set* touches, cocos2d::CCEvent* event);
+	void ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event);
+	void ccTouchesBegan(cocos2d::Set *touches, cocos2d::CCEvent *event);
+private:
+	cocos2d::CCSprite *player;
 };
 
 #endif /* TRACKSCENE_H_ */
