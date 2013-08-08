@@ -32,6 +32,10 @@ public:
 	void ccTouchesBegan(cocos2d::Set *touches, cocos2d::CCEvent *event);
 private:
 	cocos2d::CCSprite *player;
+
+	cocos2d::Point target;
+	bool accelerate;
+	float speed;
 };
 
 #endif /* TRACKSCENE_H_ */

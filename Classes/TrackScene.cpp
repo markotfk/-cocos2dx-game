@@ -4,12 +4,14 @@
  *  Created on: Aug 5, 2013
  *      Author: mtfk
  */
-
+#include <math.h>
 #include "SimpleAudioEngine.h"
 
 #include "TrackScene.h"
 
 using namespace cocos2d;
+
+#define MAX_SPEED 0.1
 
 cocos2d::CCScene* TrackScene::scene()
 {
@@ -27,12 +29,13 @@ cocos2d::CCScene* TrackScene::scene()
 	return scene;
 }
 
-TrackScene::TrackScene() : player(NULL){
+TrackScene::TrackScene() : player(NULL), accelerate(false), speed(0.0){
 
 
 }
 
-TrackScene::~TrackScene() {
+TrackScene::~TrackScene()
+{
 }
 
 /// Initialize the track scene
@@ -90,6 +93,31 @@ void TrackScene::menuCloseCallback(CCObject* pSender)
 
 void TrackScene::updateGame(float dt)
 {
+	if (accelerate)
+	{
+		speed += 0.01;
+		if (speed > MAX_SPEED)
+		{
+			speed = MAX_SPEED;
+		}
+
+	}
+	else {
+		speed -= 0.01;
+		if (speed < 0.0)
+		{
+			speed = 0.0;
+		}
+	}
+	if (speed > 0.0)
+	{
+		float deltaX = target.x - player->getPositionX();
+		float deltaY = -(target.y - player->getPositionY());
+		float rads = atan2(deltaY, deltaX);
+		player->setPositionX(player->getPositionX() + deltaX*speed);
+		player->setPositionY(player->getPositionY() + -(deltaY*speed));
+
+	}
 }
 
 
@@ -101,11 +129,16 @@ void TrackScene::ccTouchesBegan(Set *touches, CCEvent *event)
 {
 	CCTouch* touch = (CCTouch*)( touches->anyObject() );
 	CCPoint location = touch->getLocation();
+	accelerate = true;
+	target = location;
 
-	float angleDegrees = CC_RADIANS_TO_DEGREES(player->getPosition().getAngle(location));
-	player->setRotation(angleDegrees);
+	float deltaX = location.x - player->getPosition().x;
+	float deltaY = -(location.y - player->getPosition().y);
+	float rads = atan2(deltaY, deltaX);
+
+	player->stopAllActions();
 	player->runAction( CCSequence::create(
-				CCMoveTo::create(2.0, location),
+				CCRotateTo::create(0.1, CC_RADIANS_TO_DEGREES(rads)),
 				CCCallFuncN::create(this,
 		                            callfuncN_selector(TrackScene::spriteMoveFinished)),
 		        NULL) );
@@ -115,11 +148,14 @@ void TrackScene::ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event)
 {
 	CCTouch* touch = (CCTouch*)( touches->anyObject() );
 	CCPoint location = touch->getLocation();
-	float angleDegrees = CC_RADIANS_TO_DEGREES(player->getPosition().getAngle(location));
-	player->setRotation(angleDegrees);
+	float deltaX = location.x - player->getPosition().x;
+	float deltaY = -(location.y - player->getPosition().y);
+	float rads = atan2(deltaY, deltaX);
+
+	target = location;
 	player->stopAllActions();
 	player->runAction( CCSequence::create(
-					CCMoveTo::create(2.0, location),
+					CCRotateTo::create(0.1, CC_RADIANS_TO_DEGREES(rads)),
 					CCCallFuncN::create(this,
 			                            callfuncN_selector(TrackScene::spriteMoveFinished)),
 			        NULL) );
@@ -127,7 +163,7 @@ void TrackScene::ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event)
 
 void TrackScene::ccTouchesEnded(Set* touches, CCEvent* event)
 {
-	player->stopAllActions();
+	accelerate = false;
 }
 
 void TrackScene::registerWithTouchDispatcher()
