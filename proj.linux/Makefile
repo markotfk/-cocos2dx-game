@@ -3,15 +3,19 @@ EXECUTABLE = rally
 SOURCES = main.cpp \
         ../Classes/AppDelegate.cpp \
         ../Classes/GameOverScene.cpp \
-        ../Classes/TrackScene.cpp 
+        ../Classes/TrackScene.cpp \
+        ../Classes/CarTire.cpp \
+        ../Classes/RaceCar.cpp
 
 COCOS_ROOT = ../../..
 INCLUDES = -I../Classes -I$(COCOS_ROOT)/cocos2dx/include
+INCLUDES += -I$(COCOS_ROOT)/CocosDenshion/include
 
 include $(COCOS_ROOT)/cocos2dx/proj.linux/cocos2dx.mk
-SHAREDLIBS += -lcocos2d -lcocosdenshion
+SHAREDLIBS += -lcocos2d -lcocosdenshion -lbox2d
 COCOS_LIBS = $(LIB_DIR)/libcocos2d.so
 COCOS_LIBS += $(LIB_DIR)/libcocosdenshion.so
+COCOS_LIBS += $(LIB_DIR)/libbox2d.a
 
 $(TARGET): $(OBJECTS) $(STATICLIBS) $(COCOS_LIBS) $(CORE_MAKEFILE_LIST)
 	@mkdir -p $(@D)
