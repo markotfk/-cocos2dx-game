@@ -46,15 +46,15 @@ public:
 	void ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event);
 	void ccTouchesBegan(cocos2d::Set *touches, cocos2d::CCEvent *event);
 private:
+	void addSpritesFromB2World();
+
+private:
 	RaceCar *m_car;
 
-	cocos2d::Point target;
 	bool accelerate;
-	float speed;
 	b2World* m_world;
 	b2Body* m_groundBody;
 	Box2DDestructionListener m_destructionListener;
-	int m_controls;
 };
 
 #endif /* TRACKSCENE_H_ */

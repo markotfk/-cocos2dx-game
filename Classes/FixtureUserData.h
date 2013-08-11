@@ -7,27 +7,29 @@
 
 #ifndef FIXTUREUSERDATA_H_
 #define FIXTUREUSERDATA_H_
+#include "cocos2d.h"
+
 //types of fixture user data
 enum fixtureUserDataType {
     FUD_CAR_TIRE,
+    FUD_CAR,
     FUD_GROUND_AREA
 };
 
 class FixtureUserData {
 public:
-	fixtureUserDataType m_type;
-	FixtureUserData(fixtureUserDataType type) : m_type(type) {}
+	FixtureUserData(fixtureUserDataType type) : m_type(type ), m_sprite(NULL){}
 
 	virtual ~FixtureUserData() {}
 
-	virtual fixtureUserDataType getType() { return m_type; }
+	inline const fixtureUserDataType getType() const { return m_type; }
+	inline cocos2d::CCSprite* getSprite() const { return m_sprite; }
+protected:
+	fixtureUserDataType m_type;
+
+	cocos2d::CCSprite *m_sprite;
 };
 
-//class to allow marking a fixture as a car tire
-class CarTireFUD : public FixtureUserData {
-public:
-    CarTireFUD() : FixtureUserData(FUD_CAR_TIRE) {}
-};
 
 //class to allow marking a fixture as a ground area
 class GroundAreaFUD : public FixtureUserData {
@@ -35,9 +37,11 @@ public:
     float frictionModifier;
     bool outOfCourse;
 
-    GroundAreaFUD(float fm, bool ooc) : FixtureUserData(FUD_GROUND_AREA) {
-        frictionModifier = fm;
-        outOfCourse = ooc;
+    GroundAreaFUD(float friction, bool outOfCourse, float posX, float posY) : FixtureUserData(FUD_GROUND_AREA) {
+        frictionModifier = friction;
+        this->outOfCourse = outOfCourse;
+        m_sprite = cocos2d::CCSprite::create("grass20.png");
+        m_sprite->setPosition(cocos2d::Point(posX, posY));
     }
 };
 

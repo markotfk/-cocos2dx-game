@@ -20,7 +20,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     pDirector->setOpenGLView(CCEGLView::sharedOpenGLView());
     
     CCSize screenSize = CCEGLView::sharedOpenGLView()->getFrameSize();
-    CCSize designSize = CCSizeMake(1280, 1024);
+    CCSize designSize = CCSizeMake(1024, 768);
     
     CCEGLView::sharedOpenGLView()->setDesignResolutionSize(designSize.width, designSize.height, kResolutionNoBorder);
 
@@ -40,12 +40,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
 void AppDelegate::applicationDidEnterBackground() {
     CCDirector::sharedDirector()->stopAnimation();
 
-    CocosDenshion::SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
+    //CocosDenshion::SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
 void AppDelegate::applicationWillEnterForeground() {
     CCDirector::sharedDirector()->startAnimation();
 
-    CocosDenshion::SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
+    //CocosDenshion::SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
 }

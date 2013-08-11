@@ -10,6 +10,7 @@
 
 #include <set>
 #include "Box2D.h"
+#include "FixtureUserData.h"
 #ifndef DEGTORAD
 #define DEGTORAD 0.0174532925199432957f
 #define RADTODEG 57.295779513082320876f
@@ -23,7 +24,7 @@ enum {
 
 class GroundAreaFUD;
 
-class CarTire {
+class CarTire : FixtureUserData {
 public:
 	CarTire(b2World* world);
 	virtual ~CarTire();

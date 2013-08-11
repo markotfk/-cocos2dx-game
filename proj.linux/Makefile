@@ -2,7 +2,6 @@ EXECUTABLE = rally
 
 SOURCES = main.cpp \
         ../Classes/AppDelegate.cpp \
-        ../Classes/GameOverScene.cpp \
         ../Classes/TrackScene.cpp \
         ../Classes/CarTire.cpp \
         ../Classes/RaceCar.cpp

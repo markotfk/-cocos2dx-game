@@ -11,13 +11,16 @@
 #include "Box2DDestructionListener.h"
 
 
-RaceCar::RaceCar(const char* carFileName, b2World* world)
+RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : FixtureUserData(FUD_CAR)
 {
 	m_sprite = cocos2d::CCSprite::create(carFileName);
+	m_sprite->setPosition(cocos2d::Point(x, y));
 	//create car body
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	m_body = world->CreateBody(&bodyDef);
+	b2BodyDef carBodyDef;
+	carBodyDef.type = b2_dynamicBody;
+	carBodyDef.position = b2Vec2(x, y);
+	carBodyDef.userData = this;
+	m_body = world->CreateBody(&carBodyDef);
 	m_body->SetAngularDamping(3);
 
 	b2Vec2 vertices[8];
@@ -31,7 +34,7 @@ RaceCar::RaceCar(const char* carFileName, b2World* world)
 	vertices[7].Set(-1.5,   0);
 	b2PolygonShape polygonShape;
 	polygonShape.Set( vertices, 8 );
-	b2Fixture* fixture = m_body->CreateFixture(&polygonShape, 0.1f);//shape, density
+	m_body->CreateFixture(&polygonShape, 0.9f);//shape, density
 
 	//prepare common joint parameters
 	b2RevoluteJointDef jointDef;
@@ -69,7 +72,7 @@ RaceCar::RaceCar(const char* carFileName, b2World* world)
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
 	jointDef.localAnchorA.Set( -3, 8.5f );
-	flJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
+	m_flJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
 	m_tires.push_back(tire);
 
 	//front right tire
@@ -77,22 +80,28 @@ RaceCar::RaceCar(const char* carFileName, b2World* world)
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
 	jointDef.localAnchorA.Set( 3, 8.5f );
-	frJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
+	m_frJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
 	m_tires.push_back(tire);
 }
 
 RaceCar::~RaceCar() {
 	for (int i = 0; i < m_tires.size(); ++i)
         delete m_tires[i];
-	if (m_sprite != NULL)
-	{
-		m_sprite->release();
-	}
 }
 
-cocos2d::CCSprite* RaceCar::getSprite()
+void RaceCar::setPosition(float x, float y)
 {
-	return m_sprite;
+	m_sprite->setPosition(cocos2d::Point(x, y));
+}
+
+b2Vec2 RaceCar::getPosition()
+{
+	return m_body->GetPosition();
+}
+
+float RaceCar::getAngle()
+{
+	return m_body->GetAngle();
 }
 
 void RaceCar::update(int controlState)
@@ -107,19 +116,21 @@ void RaceCar::update(int controlState)
 	float turnSpeedPerSec = 160 * DEGTORAD;//from lock to lock in 0.5 sec
 	float turnPerTimeStep = turnSpeedPerSec / 60.0f;
 	float desiredAngle = 0;
-	switch ( controlState & (TDC_LEFT|TDC_RIGHT) )
+	switch ( controlState & (TDC_LEFT|TDC_RIGHT))
 	{
 		case TDC_LEFT:
-			desiredAngle = lockAngle;  break;
+			desiredAngle = lockAngle;
+			break;
 		case TDC_RIGHT:
-			desiredAngle = -lockAngle; break;
+			desiredAngle = -lockAngle;
+			break;
 		default:
 			break;
 	}
-	float angleNow = flJoint->GetJointAngle();
+	float angleNow = m_flJoint->GetJointAngle();
 	float angleToTurn = desiredAngle - angleNow;
 	angleToTurn = b2Clamp( angleToTurn, -turnPerTimeStep, turnPerTimeStep );
 	float newAngle = angleNow + angleToTurn;
-	flJoint->SetLimits( newAngle, newAngle );
-	frJoint->SetLimits( newAngle, newAngle );
+	m_flJoint->SetLimits( newAngle, newAngle );
+	m_frJoint->SetLimits( newAngle, newAngle );
 }

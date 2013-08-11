@@ -10,23 +10,27 @@
 
 #include "cocos2d.h"
 #include <vector>
-#include <Box2D.h>
+#include "Box2D.h"
+#include "FixtureUserData.h"
 
 class CarTire;
 
-class RaceCar {
+class RaceCar : FixtureUserData {
 public:
-	RaceCar(const char* carFileName, b2World* world);
+	RaceCar(const char* carFileName, float x, float y, b2World* world);
 	virtual ~RaceCar();
 
-	cocos2d::CCSprite *getSprite();
+	void setPosition(float x, float y);
+	b2Vec2 getPosition();
+	float getAngle();
+	void updateCarAngle();
+	void updateCarPosition();
 	void update(int controlState);
 
 private:
-	cocos2d::CCSprite *m_sprite;
 	b2Body* m_body;
 	std::vector<CarTire*> m_tires;
-	b2RevoluteJoint *flJoint, *frJoint;
+	b2RevoluteJoint *m_flJoint, *m_frJoint;
 };
 
 #endif /* RACECAR_H_ */
