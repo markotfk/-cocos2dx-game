@@ -4,7 +4,8 @@ SOURCES = main.cpp \
         ../Classes/AppDelegate.cpp \
         ../Classes/TrackScene.cpp \
         ../Classes/CarTire.cpp \
-        ../Classes/RaceCar.cpp
+        ../Classes/RaceCar.cpp \
+        ../Classes/ContactListener.cpp
 
 COCOS_ROOT = ../../..
 INCLUDES = -I../Classes -I$(COCOS_ROOT)/cocos2dx/include

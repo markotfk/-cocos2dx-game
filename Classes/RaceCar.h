@@ -15,7 +15,7 @@
 
 class CarTire;
 
-class RaceCar : FixtureUserData {
+class RaceCar : public FixtureUserData {
 public:
 	RaceCar(const char* carFileName, float x, float y, b2World* world);
 	virtual ~RaceCar();
@@ -26,6 +26,7 @@ public:
 	void updateCarAngle();
 	void updateCarPosition();
 	void update(int controlState);
+	inline b2Body *getBody() { return m_body; };
 
 private:
 	b2Body* m_body;

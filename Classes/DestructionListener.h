@@ -11,7 +11,7 @@
 #include <Box2D.h>
 #include "FixtureUserData.h"
 
-class Box2DDestructionListener :  public b2DestructionListener{
+class DestructionListener :  public b2DestructionListener{
 	void SayGoodbye(b2Fixture* fixture)
 	    {
 	        if ( FixtureUserData* fud = (FixtureUserData*)fixture->GetUserData() )

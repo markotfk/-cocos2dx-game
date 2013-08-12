@@ -8,7 +8,7 @@
 #include "cocos2d.h"
 #include "CarTire.h"
 #include "RaceCar.h"
-#include "Box2DDestructionListener.h"
+#include "DestructionListener.h"
 
 
 RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : FixtureUserData(FUD_CAR)

@@ -2,7 +2,7 @@
  * CarTire.cpp
  *
  *  Created on: Aug 10, 2013
- *      Author: mtfk
+ *      Author: Marko Karjalainen
  */
 
 #include "FixtureUserData.h"
@@ -11,7 +11,9 @@
 
 CarTire::CarTire(b2World* world) : FixtureUserData(FUD_CAR_TIRE)
 {
-	//m_sprite = NULL; // no sprite for tire for now
+	m_sprite = NULL; // no sprite for tire for now
+	m_currentTraction = 1.0;
+
 	b2BodyDef tireBodyDef;
 	tireBodyDef.type = b2_dynamicBody;
 	m_body = world->CreateBody(&tireBodyDef);

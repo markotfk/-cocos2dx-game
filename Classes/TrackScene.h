@@ -9,7 +9,8 @@
 #define TRACKSCENE_H_
 #include "Box2D.h"
 #include "cocos2d.h"
-#include "Box2DDestructionListener.h"
+#include "DestructionListener.h"
+#include "ContactListener.h"
 
 #ifndef DEGTORAD
 #define DEGTORAD 0.0174532925199432957f
@@ -43,6 +44,7 @@ public:
 	void spriteMoveFinished(cocos2d::CCNode* sender);
 	void registerWithTouchDispatcher();
 	void ccTouchesEnded(cocos2d::Set* touches, cocos2d::CCEvent* event);
+	void ccTouchesCancelled(cocos2d::Set *touches, cocos2d::Event *event);
 	void ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event);
 	void ccTouchesBegan(cocos2d::Set *touches, cocos2d::CCEvent *event);
 private:
@@ -51,10 +53,11 @@ private:
 private:
 	RaceCar *m_car;
 
-	bool accelerate;
 	b2World* m_world;
 	b2Body* m_groundBody;
-	Box2DDestructionListener m_destructionListener;
+	DestructionListener m_destructionListener;
+	ContactListener *m_contactListener;
+	int m_controlState;
 };
 
 #endif /* TRACKSCENE_H_ */

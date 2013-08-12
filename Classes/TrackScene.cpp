@@ -2,12 +2,16 @@
  * TrackScene.cpp
  *
  *  Created on: Aug 5, 2013
- *      Author: mtfk
+ *      Author: Marko Karjalainen
  */
 #include <math.h>
 #include "SimpleAudioEngine.h"
 #include "RaceCar.h"
+#include "ContactListener.h"
 #include "TrackScene.h"
+
+
+#define PTM_RATIO 32
 
 using namespace cocos2d;
 
@@ -27,12 +31,14 @@ cocos2d::CCScene* TrackScene::scene()
 	return scene;
 }
 
-TrackScene::TrackScene() : m_car(NULL), accelerate(false),
-		m_world(NULL), m_groundBody(NULL)
+TrackScene::TrackScene() : m_car(NULL), m_world(NULL),
+		m_groundBody(NULL), m_controlState(0)
 {
 	b2Vec2 gravity(0.0f, 0.0f);
 	m_world = new b2World(gravity);
 	m_world->SetDestructionListener(&m_destructionListener);
+	m_contactListener = new ContactListener();
+	m_world->SetContactListener(m_contactListener);
 }
 
 TrackScene::~TrackScene()
@@ -130,10 +136,7 @@ void TrackScene::menuCloseCallback(CCObject* pSender)
 void TrackScene::updateGame(float dt)
 {
 	// TODO: keyboard event handling
-	if (accelerate)
-	{
-		m_car->update(TDC_UP);
-	}
+	m_car->update(m_controlState);
 	// Instruct the world to perform a single step of simulation.
 	m_world->Step(dt, 6, 2);
 
@@ -145,10 +148,12 @@ void TrackScene::updateGame(float dt)
 			// Get user data from body
 			FixtureUserData *user = static_cast<FixtureUserData*>(body->GetUserData());
 			CCSprite *sprite = user->getSprite();
-			if (sprite != NULL)
+			if (sprite != NULL && user->getType() == FUD_CAR)
 			{
-				b2Vec2 point = body->GetPosition();
-				sprite->setPosition(Point(point.x, point.y));
+				b2Vec2 point = body->GetWorldPoint(body->GetLocalCenter());
+				Point p(point.x, point.y);
+				//printf("body position x %f, y %f\n", p.x, p.y);
+				sprite->setPosition(p);
 				sprite->setRotation(body->GetAngle()*RADTODEG);
 			}
 			// Go through body fixtures
@@ -156,7 +161,7 @@ void TrackScene::updateGame(float dt)
 			{
 				// Get user data from fixture
 				FixtureUserData *user = static_cast<FixtureUserData*>(fixture->GetUserData());
-				if (user != NULL)
+				if (user != NULL && user->getType() == FUD_CAR)
 				{
 					CCSprite *sprite = user->getSprite();
 					if (sprite != NULL)
@@ -173,25 +178,61 @@ void TrackScene::updateGame(float dt)
 	float angle = m_car->getAngle();
 	//printf("position: x: %f, y:%f\n", position.x, position.y);
 	//printf("angle:%f\n", angle);
+
+
+	// Go through contacts
+	/*if (m_contactListener->m_contacts.size() > 0)
+	{
+		printf("Amount of contacts: %u\n", (unsigned int)m_contactListener->m_contacts.size());
+	}
+
+	for(auto pos = m_contactListener->m_contacts.begin();pos != m_contactListener->m_contacts.end(); ++pos) {
+		RallyContact contact = *pos;
+
+		b2Body *bodyA = contact.fixtureA->GetBody();
+		b2Body *bodyB = contact.fixtureB->GetBody();
+		if (bodyA->GetUserData() != NULL && bodyB->GetUserData() != NULL) {
+			FixtureUserData *dataA = static_cast<FixtureUserData*>(bodyA->GetUserData());
+			FixtureUserData *dataB = static_cast<FixtureUserData*>(bodyB->GetUserData());
+
+		}
+	}*/
+
+
 }
 
 void TrackScene::ccTouchesBegan(Set *touches, CCEvent *event)
 {
 	CCTouch* touch = (CCTouch*)( touches->anyObject() );
-	CCPoint location = touch->getLocation();
+	CCPoint location = touch->getLocationInView();
+	location = CCDirector::sharedDirector()->convertToGL(location);
 
-	accelerate = true;
+	float deltaX = location.x - m_car->getPosition().x;
+	float deltaY = -(location.y - m_car->getPosition().y);
+	float rads = atan2(deltaY, deltaX);
+	m_controlState = TDC_UP;
 }
 
 void TrackScene::ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event)
 {
 	CCTouch* touch = (CCTouch*)( touches->anyObject() );
 	CCPoint location = touch->getLocation();
+	location = CCDirector::sharedDirector()->convertToGL(location);
+
+	float deltaX = location.x - m_car->getPosition().x;
+	float deltaY = -(location.y - m_car->getPosition().y);
+	float rads = atan2(deltaY, deltaX);
+	m_controlState = TDC_UP;
+}
+
+void TrackScene::ccTouchesCancelled(Set* touches, CCEvent* event)
+{
+	m_controlState = 0;
 }
 
 void TrackScene::ccTouchesEnded(Set* touches, CCEvent* event)
 {
-	accelerate = false;
+	m_controlState = 0;
 }
 
 void TrackScene::registerWithTouchDispatcher()
