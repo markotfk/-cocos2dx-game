@@ -8,8 +8,8 @@
 #include "SimpleAudioEngine.h"
 #include "RaceCar.h"
 #include "ContactListener.h"
+#include "Constants.h"
 #include "TrackScene.h"
-
 
 #define PTM_RATIO 32
 
@@ -44,6 +44,7 @@ TrackScene::TrackScene() : m_car(NULL), m_world(NULL),
 TrackScene::~TrackScene()
 {
 	delete m_world;
+	delete m_contactListener;
 }
 
 /// Initialize the track scene
@@ -52,7 +53,7 @@ bool TrackScene::init()
 	bool retVal = false;
 	do {
 		// super init first
-		CC_BREAK_IF(!CCLayerColor::initWithColor( ccc4(210,210,210,210), 1024, 768 ) );
+		CC_BREAK_IF(!CCLayerColor::initWithColor( ccc4(225,225,225,225), 1024, 768 ) );
 
 		CCSize visibleSize = CCDirector::sharedDirector()->getVisibleSize();
 		CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
@@ -150,11 +151,9 @@ void TrackScene::updateGame(float dt)
 			CCSprite *sprite = user->getSprite();
 			if (sprite != NULL && user->getType() == FUD_CAR)
 			{
-				b2Vec2 point = body->GetWorldPoint(body->GetLocalCenter());
-				Point p(point.x, point.y);
-				//printf("body position x %f, y %f\n", p.x, p.y);
-				sprite->setPosition(p);
-				sprite->setRotation(body->GetAngle()*RADTODEG);
+				RaceCar* car = static_cast<RaceCar*>(user);
+				car->updateCarAngle();
+				car->updateCarPosition();
 			}
 			// Go through body fixtures
 			for (b2Fixture *fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
@@ -163,21 +162,17 @@ void TrackScene::updateGame(float dt)
 				FixtureUserData *user = static_cast<FixtureUserData*>(fixture->GetUserData());
 				if (user != NULL && user->getType() == FUD_CAR)
 				{
-					CCSprite *sprite = user->getSprite();
-					if (sprite != NULL)
-					{
-						const b2Vec2 point = body->GetPosition();
-						sprite->setPosition(Point(point.x, point.y));
-						sprite->setRotation(body->GetAngle()*RADTODEG);
-					}
+					RaceCar* car = static_cast<RaceCar*>(user);
+					car->updateCarAngle();
+					car->updateCarPosition();
 				}
 			}
 		}
 	}
-	b2Vec2 position = m_car->getPosition();
+	/*b2Vec2 position = m_car->getPosition();
 	float angle = m_car->getAngle();
-	//printf("position: x: %f, y:%f\n", position.x, position.y);
-	//printf("angle:%f\n", angle);
+	printf("car position: x: %f, y:%f\n", position.x, position.y);
+	printf("car angle:%f\n", angle);*/
 
 
 	// Go through contacts

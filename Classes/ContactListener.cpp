@@ -24,8 +24,7 @@ void ContactListener::BeginContact(b2Contact* contact)
 void ContactListener::EndContact(b2Contact* contact)
 {
 	RallyContact rallyContact = { contact->GetFixtureA(), contact->GetFixtureB() };
-    std::vector<RallyContact>::iterator pos;
-    pos = std::find(m_contacts.begin(), m_contacts.end(), rallyContact);
+    auto pos = std::find(m_contacts.begin(), m_contacts.end(), rallyContact);
     if (pos != m_contacts.end())
     {
     	m_contacts.erase(pos);

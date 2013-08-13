@@ -2,7 +2,7 @@
  * FixtureUserData.h
  *
  *  Created on: Aug 10, 2013
- *      Author: mtfk
+ *      Author: Marko Karjalainen
  */
 
 #ifndef FIXTUREUSERDATA_H_

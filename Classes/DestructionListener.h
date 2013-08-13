@@ -2,7 +2,7 @@
  * Box2DDestructionListener.h
  *
  *  Created on: Aug 10, 2013
- *      Author: mtfk
+ *      Author: Marko Karjalainen
  */
 
 #ifndef BOX2DDESTRUCTIONLISTENER_H_

@@ -2,7 +2,7 @@
  * RaceCar.h
  *
  *  Created on: Aug 7, 2013
- *      Author: mtfk
+ *      Author: Marko Karjalainen
  */
 
 #ifndef RACECAR_H_
@@ -20,7 +20,6 @@ public:
 	RaceCar(const char* carFileName, float x, float y, b2World* world);
 	virtual ~RaceCar();
 
-	void setPosition(float x, float y);
 	b2Vec2 getPosition();
 	float getAngle();
 	void updateCarAngle();

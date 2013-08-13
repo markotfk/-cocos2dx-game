@@ -2,14 +2,14 @@
  * RaceCar.cpp
  *
  *  Created on: Aug 7, 2013
- *      Author: mtfk
+ *      Author: Marko Karjalainen
  */
 
 #include "cocos2d.h"
 #include "CarTire.h"
-#include "RaceCar.h"
 #include "DestructionListener.h"
-
+#include "Constants.h"
+#include "RaceCar.h"
 
 RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : FixtureUserData(FUD_CAR)
 {
@@ -34,7 +34,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	vertices[7].Set(-1.5,   0);
 	b2PolygonShape polygonShape;
 	polygonShape.Set( vertices, 8 );
-	m_body->CreateFixture(&polygonShape, 0.9f);//shape, density
+	m_body->CreateFixture(&polygonShape, 0.1f);//shape, density
 
 	//prepare common joint parameters
 	b2RevoluteJointDef jointDef;
@@ -89,9 +89,15 @@ RaceCar::~RaceCar() {
         delete m_tires[i];
 }
 
-void RaceCar::setPosition(float x, float y)
+void RaceCar::updateCarAngle()
 {
-	m_sprite->setPosition(cocos2d::Point(x, y));
+	m_sprite->setRotation(m_body->GetAngle()*RADTODEG);
+}
+
+void RaceCar::updateCarPosition()
+{
+	const b2Vec2 pos = m_body->GetPosition();
+	m_sprite->setPosition(cocos2d::CCPoint(pos.x, pos.y));
 }
 
 b2Vec2 RaceCar::getPosition()
@@ -106,9 +112,9 @@ float RaceCar::getAngle()
 
 void RaceCar::update(int controlState)
 {
-	for (int i = 0; i < m_tires.size(); i++)
+	for (int i = 0; i < m_tires.size(); ++i)
 		m_tires[i]->updateFriction();
-	for (int i = 0; i < m_tires.size(); i++)
+	for (int i = 0; i < m_tires.size(); ++i)
 		m_tires[i]->updateDrive(controlState);
 
 	//control steering
