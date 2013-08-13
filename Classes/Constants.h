@@ -19,4 +19,6 @@ enum {
     TDC_DOWN     = 0x8
 };
 
+const float PTM = 32.0f;
+
 #endif /* CONSTANTS_H_ */

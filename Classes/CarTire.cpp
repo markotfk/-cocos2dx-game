@@ -13,15 +13,15 @@
 CarTire::CarTire(b2World* world) : FixtureUserData(FUD_CAR_TIRE)
 {
 	m_sprite = NULL; // no sprite for tire for now
-	m_currentTraction = 1.0;
+	m_currentTraction = 1.0/PTM;
 
 	b2BodyDef tireBodyDef;
 	tireBodyDef.type = b2_dynamicBody;
 	m_body = world->CreateBody(&tireBodyDef);
 
 	b2PolygonShape polygonShape;
-	polygonShape.SetAsBox(0.5f, 1.25f);
-	m_body->CreateFixture(&polygonShape, 1);//shape, density
+	polygonShape.SetAsBox(5.0f/PTM, 3.0f/PTM);
+	m_body->CreateFixture(&polygonShape, 1.0f);//shape, density
 
 	m_body->SetUserData(this);
 }
@@ -36,12 +36,12 @@ CarTire::~CarTire()
 
 b2Vec2 CarTire::getLateralVelocity()
 {
-      b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(1,0));
+      b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(1/PTM,0));
       return b2Dot( currentRightNormal, m_body->GetLinearVelocity()) * currentRightNormal;
 }
 b2Vec2 CarTire::getForwardVelocity()
 {
-    b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(0,1));
+    b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(0,1/PTM));
     return b2Dot( currentRightNormal, m_body->GetLinearVelocity()) * currentRightNormal;
 }
 
@@ -71,17 +71,17 @@ void CarTire::updateDrive(int controlState)
 	float desiredSpeed = 0;
 	switch ( controlState & (TDC_UP|TDC_DOWN) ) {
 		case TDC_UP:
-			desiredSpeed = m_maxForwardSpeed;
+			desiredSpeed = m_maxForwardSpeed/PTM;
 			break;
 		case TDC_DOWN:
-			desiredSpeed = m_maxBackwardSpeed;
+			desiredSpeed = m_maxBackwardSpeed/PTM;
 			break;
 		default:
 			break;
 	}
 
 	//find current speed in forward direction
-	b2Vec2 currentForwardNormal = m_body->GetWorldVector(b2Vec2(0,1));
+	b2Vec2 currentForwardNormal = m_body->GetWorldVector(b2Vec2(0,1/PTM));
 	float currentSpeed = b2Dot( getForwardVelocity(), currentForwardNormal );
 
 	//apply necessary force
@@ -92,7 +92,7 @@ void CarTire::updateDrive(int controlState)
 		force = -m_maxDriveForce;
 	else
 		return;
-	m_body->ApplyForce( m_currentTraction * force * currentForwardNormal, m_body->GetWorldCenter() );
+	m_body->ApplyForce( m_currentTraction * force * currentForwardNormal, m_body->GetWorldCenter());
 }
 
 void CarTire::updateTurn(int controlState)

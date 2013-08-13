@@ -18,23 +18,21 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	//create car body
 	b2BodyDef carBodyDef;
 	carBodyDef.type = b2_dynamicBody;
-	carBodyDef.position = b2Vec2(x, y);
+	carBodyDef.position = b2Vec2(x/PTM, y/PTM);
 	carBodyDef.userData = this;
 	m_body = world->CreateBody(&carBodyDef);
 	m_body->SetAngularDamping(3);
 
-	b2Vec2 vertices[8];
-	vertices[0].Set( 1.5,   0);
-	vertices[1].Set(   3, 2.5);
-	vertices[2].Set( 2.8, 5.5);
-	vertices[3].Set(   1,  10);
-	vertices[4].Set(  -1,  10);
-	vertices[5].Set(-2.8, 5.5);
-	vertices[6].Set(  -3, 2.5);
-	vertices[7].Set(-1.5,   0);
+	b2Vec2 vertices[6];
+	vertices[0].Set(0.0f, -15.0f/PTM);
+	vertices[1].Set(37.0f/PTM, -12.0f/PTM);
+	vertices[2].Set(37.0f/PTM, 12.0f/PTM);
+	vertices[3].Set(0.0f, 15.0f/PTM);
+	vertices[4].Set(-37.0f/PTM, 14.0f/PTM);
+	vertices[5].Set(-37.0f/PTM, -14.0f/PTM);
 	b2PolygonShape polygonShape;
-	polygonShape.Set( vertices, 8 );
-	m_body->CreateFixture(&polygonShape, 0.1f);//shape, density
+	polygonShape.Set(vertices, 6);
+	m_body->CreateFixture(&polygonShape, 0.2f);//shape, density
 
 	//prepare common joint parameters
 	b2RevoluteJointDef jointDef;
@@ -55,23 +53,23 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	CarTire* tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( -3, 0.75f );
-	world->CreateJoint( &jointDef );
+	jointDef.localAnchorA.Set(-30.0f/PTM, 13.0f/PTM);
+	world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
 	//back right tire
 	tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( 3, 0.75f );
-	world->CreateJoint( &jointDef );
+	jointDef.localAnchorA.Set( -30.0f/PTM, -13.0f/PTM );
+	world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
 	//front left tire
 	tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( -3, 8.5f );
+	jointDef.localAnchorA.Set( 30.0f/PTM, 13.0f/PTM );
 	m_flJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
 	m_tires.push_back(tire);
 
@@ -79,7 +77,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( 3, 8.5f );
+	jointDef.localAnchorA.Set( -30.0f/PTM, -13.0f/PTM );
 	m_frJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
 	m_tires.push_back(tire);
 }
@@ -97,7 +95,7 @@ void RaceCar::updateCarAngle()
 void RaceCar::updateCarPosition()
 {
 	const b2Vec2 pos = m_body->GetPosition();
-	m_sprite->setPosition(cocos2d::CCPoint(pos.x, pos.y));
+	m_sprite->setPosition(cocos2d::CCPoint(pos.x*PTM, pos.y*PTM));
 }
 
 b2Vec2 RaceCar::getPosition()

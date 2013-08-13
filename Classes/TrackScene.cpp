@@ -11,8 +11,6 @@
 #include "Constants.h"
 #include "TrackScene.h"
 
-#define PTM_RATIO 32
-
 using namespace cocos2d;
 
 cocos2d::CCScene* TrackScene::scene()
@@ -34,7 +32,7 @@ cocos2d::CCScene* TrackScene::scene()
 TrackScene::TrackScene() : m_car(NULL), m_world(NULL),
 		m_groundBody(NULL), m_controlState(0)
 {
-	b2Vec2 gravity(0.0f, 0.0f);
+	const b2Vec2 gravity(0.0f, 0.0f);
 	m_world = new b2World(gravity);
 	m_world->SetDestructionListener(&m_destructionListener);
 	m_contactListener = new ContactListener();
@@ -67,10 +65,10 @@ bool TrackScene::init()
 		// enable touch
 		setTouchEnabled(true);
 
-		// Box2D stuff
+		/*// Box2D stuff
 		//set up ground areas
 		b2BodyDef groundDef;
-		groundDef.position.Set(0.0f, 0.0f);
+		groundDef.position.Set(carPosX/PTM, carPosY/PTM);
 		m_groundBody = m_world->CreateBody(&groundDef);
 
 		b2PolygonShape polygonShape;
@@ -78,13 +76,13 @@ bool TrackScene::init()
 		fixtureDef.shape = &polygonShape;
 		fixtureDef.isSensor = true;
 
-		polygonShape.SetAsBox( 10, 10, b2Vec2(-10,15), 20*DEGTORAD );
+		polygonShape.SetAsBox( 10, 10, b2Vec2(carPosX/PTM,carPosY/PTM), 20*DEGTORAD );
 		b2Fixture* groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
-		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.5f, false, carPosX, carPosY ) );
+		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.5f, false, carPosX/PTM, carPosY/PTM ) );
 
-		polygonShape.SetAsBox( 9, 5, b2Vec2(5,20), -40*DEGTORAD );
+		polygonShape.SetAsBox( 190, 255, b2Vec2(carPosX, carPosY), -40*DEGTORAD );
 		groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
-		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, false, carPosX, carPosY ) );
+		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, false, carPosX, carPosY ) );*/
 
 		// schedule updateGame to be called for every frame
 		schedule( schedule_selector(TrackScene::updateGame) );
@@ -199,8 +197,7 @@ void TrackScene::updateGame(float dt)
 void TrackScene::ccTouchesBegan(Set *touches, CCEvent *event)
 {
 	CCTouch* touch = (CCTouch*)( touches->anyObject() );
-	CCPoint location = touch->getLocationInView();
-	location = CCDirector::sharedDirector()->convertToGL(location);
+	CCPoint location = CCDirector::sharedDirector()->convertToGL(touch->getLocationInView());
 
 	float deltaX = location.x - m_car->getPosition().x;
 	float deltaY = -(location.y - m_car->getPosition().y);
@@ -211,13 +208,11 @@ void TrackScene::ccTouchesBegan(Set *touches, CCEvent *event)
 void TrackScene::ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event)
 {
 	CCTouch* touch = (CCTouch*)( touches->anyObject() );
-	CCPoint location = touch->getLocation();
-	location = CCDirector::sharedDirector()->convertToGL(location);
+	CCPoint location = CCDirector::sharedDirector()->convertToGL(touch->getLocationInView());
 
 	float deltaX = location.x - m_car->getPosition().x;
 	float deltaY = -(location.y - m_car->getPosition().y);
 	float rads = atan2(deltaY, deltaX);
-	m_controlState = TDC_UP;
 }
 
 void TrackScene::ccTouchesCancelled(Set* touches, CCEvent* event)
@@ -227,7 +222,7 @@ void TrackScene::ccTouchesCancelled(Set* touches, CCEvent* event)
 
 void TrackScene::ccTouchesEnded(Set* touches, CCEvent* event)
 {
-	m_controlState = 0;
+	m_controlState = TDC_DOWN;
 }
 
 void TrackScene::registerWithTouchDispatcher()
