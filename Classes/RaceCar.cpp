@@ -13,7 +13,7 @@
 
 RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : FixtureUserData(FUD_CAR)
 {
-	m_sprite = cocos2d::CCSprite::create(carFileName);
+	m_sprite = cocos2d::Sprite::create(carFileName);
 	m_sprite->setPosition(cocos2d::Point(x, y));
 	//create car body
 	b2BodyDef carBodyDef;
@@ -95,20 +95,10 @@ void RaceCar::updateCarAngle()
 void RaceCar::updateCarPosition()
 {
 	const b2Vec2 pos = m_body->GetPosition();
-	m_sprite->setPosition(cocos2d::CCPoint(pos.x*PTM, pos.y*PTM));
+	m_sprite->setPosition(cocos2d::Point(pos.x*PTM, pos.y*PTM));
 }
 
-b2Vec2 RaceCar::getPosition()
-{
-	return m_body->GetPosition();
-}
-
-float RaceCar::getAngle()
-{
-	return m_body->GetAngle();
-}
-
-void RaceCar::update(int controlState)
+void RaceCar::update(CarControls controlState)
 {
 	for (int i = 0; i < m_tires.size(); ++i)
 		m_tires[i]->updateFriction();
@@ -120,12 +110,12 @@ void RaceCar::update(int controlState)
 	float turnSpeedPerSec = 160 * DEGTORAD;//from lock to lock in 0.5 sec
 	float turnPerTimeStep = turnSpeedPerSec / 60.0f;
 	float desiredAngle = 0;
-	switch ( controlState & (TDC_LEFT|TDC_RIGHT))
+	switch (controlState)
 	{
-		case TDC_LEFT:
+		case CarControls::LEFT:
 			desiredAngle = lockAngle;
 			break;
-		case TDC_RIGHT:
+		case CarControls::RIGHT:
 			desiredAngle = -lockAngle;
 			break;
 		default:

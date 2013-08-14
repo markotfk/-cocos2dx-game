@@ -11,20 +11,22 @@
 #include "cocos2d.h"
 #include <vector>
 #include "Box2D.h"
+
 #include "FixtureUserData.h"
 
 class CarTire;
+enum class CarControls;
 
 class RaceCar : public FixtureUserData {
 public:
 	RaceCar(const char* carFileName, float x, float y, b2World* world);
 	virtual ~RaceCar();
-
-	b2Vec2 getPosition();
-	float getAngle();
 	void updateCarAngle();
 	void updateCarPosition();
-	void update(int controlState);
+	void update(CarControls controlState);
+
+	inline b2Vec2 getPosition() const { return m_body->GetPosition(); }
+	inline float getAngle() const { return m_body->GetAngle(); }
 	inline b2Body *getBody() { return m_body; };
 
 private:

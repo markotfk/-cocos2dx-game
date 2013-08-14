@@ -13,12 +13,12 @@
 
 using namespace cocos2d;
 
-cocos2d::CCScene* TrackScene::scene()
+cocos2d::Scene* TrackScene::scene()
 {
-	CCScene * scene = NULL;
+	Scene * scene = nullptr;
 	do
 	{
-		scene = CCScene::create();
+		scene = Scene::create();
 		CC_BREAK_IF(!scene);
 		TrackScene *layer = TrackScene::create();
 		CC_BREAK_IF(!layer);
@@ -29,8 +29,8 @@ cocos2d::CCScene* TrackScene::scene()
 	return scene;
 }
 
-TrackScene::TrackScene() : m_car(NULL), m_world(NULL),
-		m_groundBody(NULL), m_controlState(0)
+TrackScene::TrackScene() : m_car(nullptr), m_world(nullptr),
+		m_groundBody(nullptr), m_contactListener(nullptr), m_controlState(CarControls::NONE)
 {
 	const b2Vec2 gravity(0.0f, 0.0f);
 	m_world = new b2World(gravity);
@@ -51,10 +51,10 @@ bool TrackScene::init()
 	bool retVal = false;
 	do {
 		// super init first
-		CC_BREAK_IF(!CCLayerColor::initWithColor( ccc4(225,225,225,225), 1024, 768 ) );
+		CC_BREAK_IF(!LayerColor::initWithColor( ccc4(225,225,225,225), 1024, 768 ) );
 
-		CCSize visibleSize = CCDirector::sharedDirector()->getVisibleSize();
-		CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
+		Size visibleSize = Director::sharedDirector()->getVisibleSize();
+		Point origin = Director::sharedDirector()->getVisibleOrigin();
 
 		// Initialize the race car
 		float carPosX = origin.x + visibleSize.width/2;
@@ -101,23 +101,23 @@ void TrackScene::addSpritesFromB2World()
 {
 	for (b2Body* body = m_world->GetBodyList(); body; body = body->GetNext())
 	{
-		if (body->GetUserData() != NULL)
+		if (body->GetUserData() != nullptr)
 		{
-			FixtureUserData *user = static_cast<FixtureUserData*>(body->GetUserData());
-			CCSprite *sprite = user->getSprite();
-			if (sprite != NULL)
+			auto user = static_cast<FixtureUserData*>(body->GetUserData());
+			auto sprite = user->getSprite();
+			if (sprite != nullptr)
 			{
 				addChild(sprite);
 			}
 
 		}
-		for (b2Fixture *fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
+		for (auto fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 		{
 			FixtureUserData *user = static_cast<FixtureUserData*>(fixture->GetUserData());
-			if (user != NULL)
+			if (user != nullptr)
 			{
-				CCSprite *sprite = user->getSprite();
-				if (sprite != NULL)
+				Sprite *sprite = user->getSprite();
+				if (sprite != nullptr)
 				{
 					addChild(sprite);
 				}
@@ -126,9 +126,9 @@ void TrackScene::addSpritesFromB2World()
 	}
 }
 
-void TrackScene::menuCloseCallback(CCObject* pSender)
+void TrackScene::menuCloseCallback(Object* pSender)
 {
-	CCDirector::sharedDirector()->end();
+	Director::sharedDirector()->end();
 	exit(0);
 }
 
@@ -140,27 +140,27 @@ void TrackScene::updateGame(float dt)
 	m_world->Step(dt, 6, 2);
 
 	// Go through the bodies in world and update sprites
-	for (b2Body* body = m_world->GetBodyList(); body; body = body->GetNext())
+	for (auto body = m_world->GetBodyList(); body; body = body->GetNext())
 	{
-		if (body->GetUserData() != NULL)
+		if (body->GetUserData() != nullptr)
 		{
 			// Get user data from body
-			FixtureUserData *user = static_cast<FixtureUserData*>(body->GetUserData());
-			CCSprite *sprite = user->getSprite();
-			if (sprite != NULL && user->getType() == FUD_CAR)
+			auto userData = static_cast<FixtureUserData*>(body->GetUserData());
+			auto sprite = userData->getSprite();
+			if (sprite != nullptr && userData->getType() == FUD_CAR)
 			{
-				RaceCar* car = static_cast<RaceCar*>(user);
+				auto car = static_cast<RaceCar*>(userData);
 				car->updateCarAngle();
 				car->updateCarPosition();
 			}
 			// Go through body fixtures
-			for (b2Fixture *fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
+			for (auto fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 			{
 				// Get user data from fixture
-				FixtureUserData *user = static_cast<FixtureUserData*>(fixture->GetUserData());
-				if (user != NULL && user->getType() == FUD_CAR)
+				auto user = static_cast<FixtureUserData*>(fixture->GetUserData());
+				if (user != nullptr && user->getType() == FUD_CAR)
 				{
-					RaceCar* car = static_cast<RaceCar*>(user);
+					auto car = static_cast<RaceCar*>(user);
 					car->updateCarAngle();
 					car->updateCarPosition();
 				}
@@ -184,7 +184,7 @@ void TrackScene::updateGame(float dt)
 
 		b2Body *bodyA = contact.fixtureA->GetBody();
 		b2Body *bodyB = contact.fixtureB->GetBody();
-		if (bodyA->GetUserData() != NULL && bodyB->GetUserData() != NULL) {
+		if (bodyA->GetUserData() != nullptr && bodyB->GetUserData() != nullptr) {
 			FixtureUserData *dataA = static_cast<FixtureUserData*>(bodyA->GetUserData());
 			FixtureUserData *dataB = static_cast<FixtureUserData*>(bodyB->GetUserData());
 
@@ -194,40 +194,40 @@ void TrackScene::updateGame(float dt)
 
 }
 
-void TrackScene::ccTouchesBegan(Set *touches, CCEvent *event)
+void TrackScene::ccTouchesBegan(Set *touches, Event *event)
 {
-	CCTouch* touch = (CCTouch*)( touches->anyObject() );
-	CCPoint location = CCDirector::sharedDirector()->convertToGL(touch->getLocationInView());
+	auto touch = static_cast<Touch*>( touches->anyObject() );
+	auto locPoint = Director::sharedDirector()->convertToGL(touch->getLocationInView());
 
-	float deltaX = location.x - m_car->getPosition().x;
-	float deltaY = -(location.y - m_car->getPosition().y);
+	float deltaX = locPoint.x - m_car->getPosition().x;
+	float deltaY = -(locPoint.y - m_car->getPosition().y);
 	float rads = atan2(deltaY, deltaX);
-	m_controlState = TDC_UP;
+	m_controlState = CarControls::UP;
 }
 
 void TrackScene::ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event)
 {
-	CCTouch* touch = (CCTouch*)( touches->anyObject() );
-	CCPoint location = CCDirector::sharedDirector()->convertToGL(touch->getLocationInView());
+	auto touch = static_cast<Touch*>( touches->anyObject() );
+	auto location = Director::sharedDirector()->convertToGL(touch->getLocationInView());
 
 	float deltaX = location.x - m_car->getPosition().x;
 	float deltaY = -(location.y - m_car->getPosition().y);
 	float rads = atan2(deltaY, deltaX);
 }
 
-void TrackScene::ccTouchesCancelled(Set* touches, CCEvent* event)
+void TrackScene::ccTouchesCancelled(Set* touches, Event* event)
 {
-	m_controlState = 0;
+	m_controlState = CarControls::NONE;
 }
 
-void TrackScene::ccTouchesEnded(Set* touches, CCEvent* event)
+void TrackScene::ccTouchesEnded(Set* touches, Event* event)
 {
-	m_controlState = TDC_DOWN;
+	m_controlState = CarControls::NONE;
 }
 
 void TrackScene::registerWithTouchDispatcher()
 {
-	CCDirector::sharedDirector()->getTouchDispatcher()->addStandardDelegate(this,0);
+	Director::sharedDirector()->getTouchDispatcher()->addStandardDelegate(this,0);
 }
 
 

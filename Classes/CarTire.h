@@ -13,6 +13,7 @@
 #include "FixtureUserData.h"
 
 class GroundAreaFUD;
+enum class CarControls;
 
 class CarTire : FixtureUserData {
 public:
@@ -24,8 +25,8 @@ public: // public member functions
 	b2Vec2 getForwardVelocity();
 
 	void updateFriction();
-	void updateDrive(int controlState);
-	void updateTurn(int controlState);
+	void updateDrive(CarControls controlState);
+	void updateTurn(CarControls controlState);
 	void setCharacteristics(float maxForwardSpeed, float maxBackwardSpeed, float maxDriveForce, float maxLateralImpulse);
 
 public: // public fields

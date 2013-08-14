@@ -15,14 +15,14 @@ AppDelegate::~AppDelegate()
 
 bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
-    CCDirector *pDirector = CCDirector::sharedDirector();
+    Director *pDirector = Director::sharedDirector();
     
-    pDirector->setOpenGLView(CCEGLView::sharedOpenGLView());
+    pDirector->setOpenGLView(EGLView::sharedOpenGLView());
     
-    CCSize screenSize = CCEGLView::sharedOpenGLView()->getFrameSize();
-    CCSize designSize = CCSizeMake(1024, 768);
+    Size screenSize = EGLView::sharedOpenGLView()->getFrameSize();
+    Size designSize = CCSizeMake(1024, 768);
     
-    CCEGLView::sharedOpenGLView()->setDesignResolutionSize(designSize.width, designSize.height, kResolutionNoBorder);
+    EGLView::sharedOpenGLView()->setDesignResolutionSize(designSize.width, designSize.height, kResolutionNoBorder);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     pDirector->setAnimationInterval(1.0 / 60);
@@ -35,14 +35,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 // This function will be called when the app is inactive. When comes a phone call,it's be invoked too
 void AppDelegate::applicationDidEnterBackground() {
-    CCDirector::sharedDirector()->stopAnimation();
+    Director::sharedDirector()->stopAnimation();
 
     //CocosDenshion::SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
 void AppDelegate::applicationWillEnterForeground() {
-    CCDirector::sharedDirector()->startAnimation();
+    Director::sharedDirector()->startAnimation();
 
     //CocosDenshion::SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
 }
