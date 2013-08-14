@@ -99,7 +99,7 @@ bool TrackScene::init()
 
 void TrackScene::addSpritesFromB2World()
 {
-	for (b2Body* body = m_world->GetBodyList(); body; body = body->GetNext())
+	for (auto body = m_world->GetBodyList(); body; body = body->GetNext())
 	{
 		if (body->GetUserData() != nullptr)
 		{

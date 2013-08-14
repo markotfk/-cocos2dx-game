@@ -79,7 +79,7 @@ void CarTire::updateDrive(CarControls controlState)
 			desiredSpeed = m_maxBackwardSpeed/PTM;
 			break;
 		default:
-			break;
+			return;
 	}
 
 	//find current speed in forward direction
@@ -109,7 +109,7 @@ void CarTire::updateTurn(CarControls controlState)
 			desiredTorque = -15;
 			break;
 		default:
-			break;
+			return;
 	}
 	m_body->ApplyTorque(desiredTorque);
 }

@@ -14,7 +14,7 @@
 class DestructionListener :  public b2DestructionListener{
 	void SayGoodbye(b2Fixture* fixture)
 	    {
-	        if ( FixtureUserData* fud = (FixtureUserData*)fixture->GetUserData() )
+	        if ( auto fud = (FixtureUserData*)fixture->GetUserData() )
 	            delete fud;
 	    }
 

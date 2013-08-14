@@ -32,7 +32,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	vertices[5].Set(-37.0f/PTM, -14.0f/PTM);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 6);
-	m_body->CreateFixture(&polygonShape, 0.2f);//shape, density
+	m_body->CreateFixture(&polygonShape, 0.1f);//shape, density
 
 	//prepare common joint parameters
 	b2RevoluteJointDef jointDef;
@@ -119,7 +119,7 @@ void RaceCar::update(CarControls controlState)
 			desiredAngle = -lockAngle;
 			break;
 		default:
-			break;
+			return;
 	}
 	float angleNow = m_flJoint->GetJointAngle();
 	float angleToTurn = desiredAngle - angleNow;
