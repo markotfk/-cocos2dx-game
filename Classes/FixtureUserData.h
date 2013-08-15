@@ -20,7 +20,7 @@ class FixtureUserData {
 public:
 	FixtureUserData(fixtureUserDataType type) : m_type(type), m_sprite(nullptr) {}
 
-	virtual ~FixtureUserData() {}
+	virtual ~FixtureUserData() { CC_SAFE_RELEASE_NULL(m_sprite); }
 
 	inline const fixtureUserDataType getType() const { return m_type; }
 	inline cocos2d::Sprite* getSprite() const { return m_sprite; }

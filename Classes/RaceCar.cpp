@@ -89,7 +89,8 @@ RaceCar::~RaceCar() {
 
 void RaceCar::updateCarAngle()
 {
-	m_sprite->setRotation(m_body->GetAngle()*RADTODEG);
+	const float rot = m_body->GetAngle()*RADTODEG;
+	m_sprite->setRotation(rot);
 }
 
 void RaceCar::updateCarPosition()

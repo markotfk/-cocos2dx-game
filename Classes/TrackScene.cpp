@@ -34,6 +34,8 @@ TrackScene::TrackScene() : m_car(nullptr), m_world(nullptr),
 {
 	const b2Vec2 gravity(0.0f, 0.0f);
 	m_world = new b2World(gravity);
+	m_world->SetContinuousPhysics(true);
+	m_world->SetAutoClearForces(true);
 	m_world->SetDestructionListener(&m_destructionListener);
 	m_contactListener = new ContactListener();
 	m_world->SetContactListener(m_contactListener);
@@ -65,7 +67,7 @@ bool TrackScene::init()
 		// enable touch
 		setTouchEnabled(true);
 
-		/*// Box2D stuff
+		// Box2D stuff
 		//set up ground areas
 		b2BodyDef groundDef;
 		groundDef.position.Set(carPosX/PTM, carPosY/PTM);
@@ -82,7 +84,7 @@ bool TrackScene::init()
 
 		polygonShape.SetAsBox( 190, 255, b2Vec2(carPosX, carPosY), -40*DEGTORAD );
 		groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
-		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, false, carPosX, carPosY ) );*/
+		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, false, carPosX, carPosY ) );
 
 		// schedule updateGame to be called for every frame
 		schedule( schedule_selector(TrackScene::updateGame) );
