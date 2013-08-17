@@ -10,10 +10,10 @@
 
 #include <set>
 #include "Box2D.h"
+#include "Constants.h"
 #include "FixtureUserData.h"
 
 class GroundAreaFUD;
-enum class CarControls;
 
 class CarTire : FixtureUserData {
 public:
@@ -25,9 +25,12 @@ public: // public member functions
 	b2Vec2 getForwardVelocity();
 
 	void updateFriction();
-	void updateDrive(CarControls controlState);
+	void updateDrive(int controlState);
 	void updateTurn(CarControls controlState);
 	void setCharacteristics(float maxForwardSpeed, float maxBackwardSpeed, float maxDriveForce, float maxLateralImpulse);
+	void addGroundArea(GroundAreaFUD* ga);
+	void removeGroundArea(GroundAreaFUD* ga);
+	void updateTractionAndDrag();
 
 public: // public fields
 	b2Body* m_body;
@@ -40,6 +43,10 @@ private: // private fields
 	float m_maxLateralImpulse;
 	float m_currentTraction;
 	std::set<GroundAreaFUD*> m_groundAreas;
+
+	float m_currentDrag;
+	float m_lastDriveImpulse;
+	float m_lastLateralFrictionImpulse;
 };
 
 #endif

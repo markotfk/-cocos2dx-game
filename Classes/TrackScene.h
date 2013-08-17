@@ -46,7 +46,7 @@ private:
 	b2Body* m_groundBody;
 	DestructionListener m_destructionListener;
 	ContactListener *m_contactListener;
-	CarControls m_controlState;
+	int m_controlState;
 };
 
 #endif /* TRACKSCENE_H_ */

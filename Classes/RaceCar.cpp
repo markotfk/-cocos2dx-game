@@ -11,17 +11,17 @@
 #include "Constants.h"
 #include "RaceCar.h"
 
-RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : FixtureUserData(FUD_CAR)
+RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : FixtureUserData(FixtureUserDataType::CAR)
 {
 	m_sprite = cocos2d::Sprite::create(carFileName);
-	m_sprite->setPosition(cocos2d::Point(x, y));
 	//create car body
 	b2BodyDef carBodyDef;
 	carBodyDef.type = b2_dynamicBody;
 	carBodyDef.position = b2Vec2(x/PTM, y/PTM);
+	carBodyDef.angle = 0;
 	carBodyDef.userData = this;
 	m_body = world->CreateBody(&carBodyDef);
-	m_body->SetAngularDamping(3);
+	m_body->SetAngularDamping(5);
 
 	b2Vec2 vertices[6];
 	vertices[0].Set(0.0f, -15.0f/PTM);
@@ -32,7 +32,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	vertices[5].Set(-37.0f/PTM, -14.0f/PTM);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 6);
-	m_body->CreateFixture(&polygonShape, 0.1f);//shape, density
+	m_body->CreateFixture(&polygonShape, 1.0f);//shape, density
 
 	//prepare common joint parameters
 	b2RevoluteJointDef jointDef;
@@ -44,16 +44,16 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 
 	float maxForwardSpeed = 250;
 	float maxBackwardSpeed = -40;
-	float backTireMaxDriveForce = 300;
-	float frontTireMaxDriveForce = 500;
-	float backTireMaxLateralImpulse = 8.5;
-	float frontTireMaxLateralImpulse = 7.5;
+	float backTireMaxDriveForce = 750;
+	float frontTireMaxDriveForce = 400;
+	float backTireMaxLateralImpulse = 9;
+	float frontTireMaxLateralImpulse = 9;
 
 	//back left tire
 	CarTire* tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set(-30.0f/PTM, 13.0f/PTM);
+	jointDef.localAnchorA.Set(-25.0f/PTM, 12.0f/PTM);
 	world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
@@ -61,7 +61,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( -30.0f/PTM, -13.0f/PTM );
+	jointDef.localAnchorA.Set( -25.0f/PTM, -12.0f/PTM );
 	world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
@@ -69,7 +69,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( 30.0f/PTM, 13.0f/PTM );
+	jointDef.localAnchorA.Set( 20.0f/PTM, 12.0f/PTM );
 	m_flJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
 	m_tires.push_back(tire);
 
@@ -77,7 +77,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( -30.0f/PTM, -13.0f/PTM );
+	jointDef.localAnchorA.Set( 20.0f/PTM, -12.0f/PTM );
 	m_frJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
 	m_tires.push_back(tire);
 }
@@ -86,20 +86,7 @@ RaceCar::~RaceCar() {
 	for (int i = 0; i < m_tires.size(); ++i)
         delete m_tires[i];
 }
-
-void RaceCar::updateCarAngle()
-{
-	const float rot = m_body->GetAngle()*RADTODEG;
-	m_sprite->setRotation(rot);
-}
-
-void RaceCar::updateCarPosition()
-{
-	const b2Vec2 pos = m_body->GetPosition();
-	m_sprite->setPosition(cocos2d::Point(pos.x*PTM, pos.y*PTM));
-}
-
-void RaceCar::update(CarControls controlState)
+void RaceCar::update(int controlState)
 {
 	for (int i = 0; i < m_tires.size(); ++i)
 		m_tires[i]->updateFriction();
@@ -108,10 +95,10 @@ void RaceCar::update(CarControls controlState)
 
 	//control steering
 	float lockAngle = 35 * DEGTORAD;
-	float turnSpeedPerSec = 160 * DEGTORAD;//from lock to lock in 0.5 sec
+	float turnSpeedPerSec = 320 * DEGTORAD;//from lock to lock in 0.25 sec
 	float turnPerTimeStep = turnSpeedPerSec / 60.0f;
 	float desiredAngle = 0;
-	switch (controlState)
+	switch (controlState & (CarControls::LEFT|CarControls::RIGHT))
 	{
 		case CarControls::LEFT:
 			desiredAngle = lockAngle;
@@ -120,7 +107,7 @@ void RaceCar::update(CarControls controlState)
 			desiredAngle = -lockAngle;
 			break;
 		default:
-			return;
+			break;
 	}
 	float angleNow = m_flJoint->GetJointAngle();
 	float angleToTurn = desiredAngle - angleNow;

@@ -66,6 +66,8 @@ bool TrackScene::init()
 
 		// enable touch
 		setTouchEnabled(true);
+		// enable keyboard
+		setKeyboardEnabled(true);
 
 		// Box2D stuff
 		//set up ground areas
@@ -78,13 +80,13 @@ bool TrackScene::init()
 		fixtureDef.shape = &polygonShape;
 		fixtureDef.isSensor = true;
 
-		polygonShape.SetAsBox( 10, 10, b2Vec2(carPosX/PTM,carPosY/PTM), 20*DEGTORAD );
+		polygonShape.SetAsBox( 10, 10, b2Vec2(carPosX,carPosY), 20*DEGTORAD );
 		b2Fixture* groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
-		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.5f, false, carPosX/PTM, carPosY/PTM ) );
+		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.5f, 0.1f, carPosX/PTM, carPosY/PTM ) );
 
-		polygonShape.SetAsBox( 190, 255, b2Vec2(carPosX, carPosY), -40*DEGTORAD );
+		polygonShape.SetAsBox( 10, 10, b2Vec2(carPosX, carPosY), -40*DEGTORAD );
 		groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
-		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, false, carPosX, carPosY ) );
+		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, 0.1f, carPosX, carPosY ) );
 
 		// schedule updateGame to be called for every frame
 		schedule( schedule_selector(TrackScene::updateGame) );
@@ -118,7 +120,7 @@ void TrackScene::addSpritesFromB2World()
 			FixtureUserData *user = static_cast<FixtureUserData*>(fixture->GetUserData());
 			if (user != nullptr)
 			{
-				Sprite *sprite = user->getSprite();
+				auto sprite = user->getSprite();
 				if (sprite != nullptr)
 				{
 					addChild(sprite);
@@ -142,29 +144,34 @@ void TrackScene::updateGame(float dt)
 	m_world->Step(dt, 6, 2);
 
 	// Go through the bodies in world and update sprites
+	int i = 0;
+
 	for (auto body = m_world->GetBodyList(); body; body = body->GetNext())
 	{
+		//printf("Body %d: angle %f x:%f y:%f\n", ++i, body->GetAngle(), body->GetPosition().x, body->GetPosition().y);
 		if (body->GetUserData() != nullptr)
 		{
 			// Get user data from body
 			auto userData = static_cast<FixtureUserData*>(body->GetUserData());
 			auto sprite = userData->getSprite();
-			if (sprite != nullptr && userData->getType() == FUD_CAR)
+			if (sprite != nullptr)
 			{
-				auto car = static_cast<RaceCar*>(userData);
-				car->updateCarAngle();
-				car->updateCarPosition();
+				const float x = body->GetPosition().x*PTM;
+				const float y = body->GetPosition().y*PTM;
+				sprite->setPosition(Point(x, y));
+				sprite->setRotation(body->GetAngle()*RADTODEG);
 			}
 			// Go through body fixtures
 			for (auto fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 			{
 				// Get user data from fixture
 				auto user = static_cast<FixtureUserData*>(fixture->GetUserData());
-				if (user != nullptr && user->getType() == FUD_CAR)
+				if (user != nullptr)
 				{
-					auto car = static_cast<RaceCar*>(user);
-					car->updateCarAngle();
-					car->updateCarPosition();
+					const float x = body->GetPosition().x*PTM;
+					const float y = body->GetPosition().y*PTM;
+					sprite->setPosition(Point(x, y));
+					sprite->setRotation(body->GetAngle()*RADTODEG);
 				}
 			}
 		}
@@ -175,8 +182,8 @@ void TrackScene::updateGame(float dt)
 	printf("car angle:%f\n", angle);*/
 
 
-	// Go through contacts
-	/*if (m_contactListener->m_contacts.size() > 0)
+	/* Go through contacts
+	if (m_contactListener->m_contacts.size() > 0)
 	{
 		printf("Amount of contacts: %u\n", (unsigned int)m_contactListener->m_contacts.size());
 	}
@@ -195,6 +202,16 @@ void TrackScene::updateGame(float dt)
 
 
 }
+
+void keyPressed(int keyCode)
+{
+	printf("Key %d pressed\n", keyCode);
+};
+
+void keyReleased(int keyCode)
+{
+	printf("Key %d released\n", keyCode);
+};
 
 void TrackScene::ccTouchesBegan(Set *touches, Event *event)
 {
@@ -224,7 +241,7 @@ void TrackScene::ccTouchesCancelled(Set* touches, Event* event)
 
 void TrackScene::ccTouchesEnded(Set* touches, Event* event)
 {
-	m_controlState = CarControls::NONE;
+	m_controlState  = CarControls::DOWN;
 }
 
 void TrackScene::registerWithTouchDispatcher()

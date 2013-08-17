@@ -10,22 +10,23 @@
 #include "cocos2d.h"
 
 //types of fixture user data
-enum fixtureUserDataType {
-    FUD_CAR_TIRE,
-    FUD_CAR,
-    FUD_GROUND_AREA
+enum class FixtureUserDataType {
+    CAR_TIRE,
+    CAR,
+    GROUND_AREA,
+    TRACK_WALL
 };
 
 class FixtureUserData {
 public:
-	FixtureUserData(fixtureUserDataType type) : m_type(type), m_sprite(nullptr) {}
+	FixtureUserData(FixtureUserDataType type) : m_type(type), m_sprite(nullptr) {}
 
 	virtual ~FixtureUserData() { CC_SAFE_RELEASE_NULL(m_sprite); }
 
-	inline const fixtureUserDataType getType() const { return m_type; }
+	inline const FixtureUserDataType getType() const { return m_type; }
 	inline cocos2d::Sprite* getSprite() const { return m_sprite; }
 protected:
-	fixtureUserDataType m_type;
+	FixtureUserDataType m_type;
 
 	cocos2d::Sprite *m_sprite;
 };
@@ -35,14 +36,19 @@ protected:
 class GroundAreaFUD : public FixtureUserData {
 public:
     float frictionModifier;
-    bool outOfCourse;
+    float dragModifier;
 
-    GroundAreaFUD(float friction, bool outOfCourse, float posX, float posY) : FixtureUserData(FUD_GROUND_AREA) {
+    GroundAreaFUD(float friction, float drag, float posX, float posY) : FixtureUserData(FixtureUserDataType::GROUND_AREA) {
         frictionModifier = friction;
-        this->outOfCourse = outOfCourse;
+        dragModifier = drag;
         m_sprite = cocos2d::Sprite::create("grass20.png");
         m_sprite->setPosition(cocos2d::Point(posX, posY));
     }
+};
+
+class TrackWallFUD : public FixtureUserData
+{
+	public: TrackWallFUD() :   FixtureUserData(FixtureUserDataType::TRACK_WALL) {}
 };
 
 #endif /* FIXTUREUSERDATA_H_ */
