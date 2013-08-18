@@ -36,6 +36,8 @@ public:
 	void ccTouchesCancelled(cocos2d::Set *touches, cocos2d::Event *event);
 	void ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event);
 	void ccTouchesBegan(cocos2d::Set *touches, cocos2d::Event *event);
+	void keyPressed(int keyCode);
+	void keyReleased(int keyCode);
 private:
 	void addSpritesFromB2World();
 

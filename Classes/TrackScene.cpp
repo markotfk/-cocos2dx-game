@@ -138,7 +138,6 @@ void TrackScene::menuCloseCallback(Object* pSender)
 
 void TrackScene::updateGame(float dt)
 {
-	// TODO: keyboard event handling
 	m_car->update(m_controlState);
 	// Instruct the world to perform a single step of simulation.
 	m_world->Step(dt, 6, 2);
@@ -203,14 +202,46 @@ void TrackScene::updateGame(float dt)
 
 }
 
-void keyPressed(int keyCode)
+void TrackScene::keyPressed(int keyCode)
 {
-	printf("Key %d pressed\n", keyCode);
+	switch (keyCode)
+	{
+		case KEYCODE_UP:
+			m_controlState |= CarControls::UP;
+			break;
+		case KEYCODE_DOWN:
+			m_controlState |= CarControls::DOWN;
+			break;
+		case KEYCODE_LEFT:
+			m_controlState |= CarControls::LEFT;
+			break;
+		case KEYCODE_RIGHT:
+			m_controlState |= CarControls::RIGHT;
+			break;
+		default:
+			break;
+	}
 };
 
-void keyReleased(int keyCode)
+void TrackScene::keyReleased(int keyCode)
 {
-	printf("Key %d released\n", keyCode);
+	switch (keyCode)
+		{
+		case KEYCODE_UP:
+			m_controlState &= ~CarControls::UP;
+			break;
+		case KEYCODE_DOWN:
+			m_controlState &= ~CarControls::DOWN;
+			break;
+		case KEYCODE_LEFT:
+			m_controlState &= ~CarControls::LEFT;
+			break;
+		case KEYCODE_RIGHT:
+			m_controlState &= ~CarControls::RIGHT;
+			break;
+		default:
+			break;
+		}
 };
 
 void TrackScene::ccTouchesBegan(Set *touches, Event *event)
@@ -221,7 +252,6 @@ void TrackScene::ccTouchesBegan(Set *touches, Event *event)
 	float deltaX = locPoint.x - m_car->getPosition().x;
 	float deltaY = -(locPoint.y - m_car->getPosition().y);
 	float rads = atan2(deltaY, deltaX);
-	m_controlState = CarControls::UP;
 }
 
 void TrackScene::ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event)
@@ -236,12 +266,10 @@ void TrackScene::ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event)
 
 void TrackScene::ccTouchesCancelled(Set* touches, Event* event)
 {
-	m_controlState = CarControls::NONE;
 }
 
 void TrackScene::ccTouchesEnded(Set* touches, Event* event)
 {
-	m_controlState  = CarControls::DOWN;
 }
 
 void TrackScene::registerWithTouchDispatcher()

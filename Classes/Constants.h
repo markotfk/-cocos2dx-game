@@ -20,6 +20,11 @@ enum CarControls {
     DOWN = 	0x8,
 };
 
+const int KEYCODE_UP = 283;
+const int KEYCODE_DOWN = 284;
+const int KEYCODE_LEFT = 285;
+const int KEYCODE_RIGHT = 286;
+
 const float PTM = 32.0f;
 
 #endif /* CONSTANTS_H_ */
