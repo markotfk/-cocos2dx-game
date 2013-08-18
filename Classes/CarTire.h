@@ -26,7 +26,7 @@ public: // public member functions
 
 	void updateFriction();
 	void updateDrive(int controlState);
-	void updateTurn(CarControls controlState);
+	void updateTurn(int controlState);
 	void setCharacteristics(float maxForwardSpeed, float maxBackwardSpeed, float maxDriveForce, float maxLateralImpulse);
 	void addGroundArea(GroundAreaFUD* ga);
 	void removeGroundArea(GroundAreaFUD* ga);

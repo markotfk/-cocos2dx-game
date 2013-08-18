@@ -112,7 +112,8 @@ void CarTire::updateDrive(int controlState)
 {
 	//find desired speed
 	float desiredSpeed = 0;
-	switch (controlState) {
+	switch (controlState & (CarControls::UP|CarControls::DOWN))
+	{
 		case CarControls::UP:
 			desiredSpeed = m_maxForwardSpeed/PTM;
 			break;
@@ -163,19 +164,18 @@ void CarTire::updateDrive(int controlState)
 	m_body->ApplyLinearImpulse( m_currentTraction * impulse, m_body->GetWorldCenter() );
 }
 
-void CarTire::updateTurn(CarControls controlState)
+void CarTire::updateTurn(int controlState)
 {
-	/*float desiredTorque = 0;
-	switch (controlState)
+	float desiredTorque = 0;
+	switch (controlState & (CarControls::LEFT|CarControls::RIGHT))
 	{
 		case CarControls::LEFT:
-			desiredTorque = 15;
+			desiredTorque = 15/PTM;
 			break;
 		case CarControls::RIGHT:
-			desiredTorque = -15;
+			desiredTorque = -15/PTM;
 			break;
-		default:
-			return;
+		default: ;//nothing
 	}
-	m_body->ApplyTorque(desiredTorque);*/
+	m_body->ApplyTorque(desiredTorque);
 }

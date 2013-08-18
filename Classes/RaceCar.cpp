@@ -92,7 +92,8 @@ void RaceCar::update(int controlState)
 		m_tires[i]->updateFriction();
 	for (int i = 0; i < m_tires.size(); ++i)
 		m_tires[i]->updateDrive(controlState);
-
+	for (int i = 0; i < m_tires.size(); ++i)
+		m_tires[i]->updateTurn(controlState);
 	//control steering
 	float lockAngle = 35 * DEGTORAD;
 	float turnSpeedPerSec = 320 * DEGTORAD;//from lock to lock in 0.25 sec
@@ -111,8 +112,8 @@ void RaceCar::update(int controlState)
 	}
 	float angleNow = m_flJoint->GetJointAngle();
 	float angleToTurn = desiredAngle - angleNow;
-	angleToTurn = b2Clamp( angleToTurn, -turnPerTimeStep, turnPerTimeStep );
+	angleToTurn = b2Clamp(angleToTurn, -turnPerTimeStep, turnPerTimeStep);
 	float newAngle = angleNow + angleToTurn;
-	m_flJoint->SetLimits( newAngle, newAngle );
-	m_frJoint->SetLimits( newAngle, newAngle );
+	m_flJoint->SetLimits(newAngle, newAngle);
+	m_frJoint->SetLimits(newAngle, newAngle);
 }
