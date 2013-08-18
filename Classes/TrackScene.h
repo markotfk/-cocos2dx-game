@@ -14,6 +14,7 @@
 #include "ContactListener.h"
 
 class RaceCar;
+class DebugDraw;
 
 class TrackScene: public cocos2d::LayerColor {
 public:
@@ -32,18 +33,15 @@ public:
 	void addTarget();
 	void spriteMoveFinished(cocos2d::Node* sender);
 	void registerWithTouchDispatcher();
-	void ccTouchesEnded(cocos2d::Set* touches, cocos2d::Event* event);
-	void ccTouchesCancelled(cocos2d::Set *touches, cocos2d::Event *event);
-	void ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event);
-	void ccTouchesBegan(cocos2d::Set *touches, cocos2d::Event *event);
 	void keyPressed(int keyCode);
 	void keyReleased(int keyCode);
+	void draw();
 private:
 	void addSpritesFromB2World();
 
 private:
 	RaceCar *m_car;
-
+	DebugDraw *m_debugDraw;
 	b2World* m_world;
 	b2Body* m_groundBody;
 	DestructionListener m_destructionListener;

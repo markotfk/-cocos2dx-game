@@ -5,14 +5,17 @@ SOURCES = main.cpp \
         ../Classes/TrackScene.cpp \
         ../Classes/CarTire.cpp \
         ../Classes/RaceCar.cpp \
-        ../Classes/ContactListener.cpp
+        ../Classes/ContactListener.cpp \
+        ../Classes/FixtureUserData.cpp \
+        ../Classes/GroundAreaFUD.cpp \
+        ../Classes/DebugDraw.cpp
 
 COCOS_ROOT = ../../..
 INCLUDES = -I../Classes -I$(COCOS_ROOT)/cocos2dx/include
 INCLUDES += -I$(COCOS_ROOT)/CocosDenshion/include
 
 include $(COCOS_ROOT)/cocos2dx/proj.linux/cocos2dx.mk
-SHAREDLIBS += -lcocos2d -lcocosdenshion -lbox2d
+SHAREDLIBS += -lcocos2d -lcocosdenshion -lbox2d -lglut
 COCOS_LIBS = $(LIB_DIR)/libcocos2d.so
 COCOS_LIBS += $(LIB_DIR)/libcocosdenshion.so
 COCOS_LIBS += $(LIB_DIR)/libbox2d.a

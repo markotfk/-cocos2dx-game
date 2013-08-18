@@ -15,9 +15,9 @@ AppDelegate::~AppDelegate()
 
 bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
-    Director *pDirector = Director::sharedDirector();
+    auto director = Director::sharedDirector();
     
-    pDirector->setOpenGLView(EGLView::sharedOpenGLView());
+    director->setOpenGLView(EGLView::sharedOpenGLView());
     
     Size screenSize = EGLView::sharedOpenGLView()->getFrameSize();
     Size designSize = CCSizeMake(1024, 768);
@@ -25,10 +25,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     EGLView::sharedOpenGLView()->setDesignResolutionSize(designSize.width, designSize.height, kResolutionNoBorder);
 
     // set FPS. the default value is 1.0/60 if you don't call this
-    pDirector->setAnimationInterval(1.0 / 60);
+    director->setAnimationInterval(1.0 / 60);
 
     // create and run a scene. it's an autorelease object
-    pDirector->runWithScene(TrackScene::scene());
+    director->runWithScene(TrackScene::scene());
 
     return true;
 }

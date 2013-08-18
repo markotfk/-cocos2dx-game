@@ -8,24 +8,25 @@
 #include "cocos2d.h"
 #include "FixtureUserData.h"
 #include "Constants.h"
+#include "GroundAreaFUD.h"
 #include "CarTire.h"
 
 
 CarTire::CarTire(b2World* world) : m_maxForwardSpeed(0), m_maxBackwardSpeed(0),
 	m_maxDriveForce(0), m_maxLateralImpulse(0), m_currentTraction(0),
 	m_lastDriveImpulse(0), m_lastLateralFrictionImpulse(0),
-	FixtureUserData(FixtureUserDataType::CAR_TIRE)
+	FixtureUserData("road10.png", FixtureUserDataType::CAR_TIRE)
 {
-	m_sprite = cocos2d::Sprite::create("road10.png"); // this is for debugging
 	m_currentTraction = 1/PTM;
 	m_currentDrag = 1/PTM;
 
 	b2BodyDef tireBodyDef;
 	tireBodyDef.type = b2_dynamicBody;
+	tireBodyDef.angle = 0;
 	m_body = world->CreateBody(&tireBodyDef);
 
 	b2PolygonShape polygonShape;
-	polygonShape.SetAsBox(6.0f/PTM, 3.0f/PTM);
+	polygonShape.SetAsBox(5.0f/PTM, 3.0f/PTM);
 	m_body->CreateFixture(&polygonShape, 1.0f);//shape, density
 
 	m_body->SetUserData(this);
@@ -162,6 +163,7 @@ void CarTire::updateDrive(int controlState)
 	if ( impulse.Length() > m_maxLateralImpulse )
 		impulse *= m_maxLateralImpulse / impulse.Length();
 	m_body->ApplyLinearImpulse( m_currentTraction * impulse, m_body->GetWorldCenter() );
+
 }
 
 void CarTire::updateTurn(int controlState)

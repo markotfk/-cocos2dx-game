@@ -11,9 +11,9 @@
 #include "Constants.h"
 #include "RaceCar.h"
 
-RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : FixtureUserData(FixtureUserDataType::CAR)
+RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : FixtureUserData(carFileName,
+		FixtureUserDataType::CAR)
 {
-	m_sprite = cocos2d::Sprite::create(carFileName);
 	//create car body
 	b2BodyDef carBodyDef;
 	carBodyDef.type = b2_dynamicBody;

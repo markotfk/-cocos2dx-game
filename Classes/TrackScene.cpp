@@ -6,9 +6,11 @@
  */
 #include <math.h>
 #include "SimpleAudioEngine.h"
+#include "DebugDraw.h"
 #include "RaceCar.h"
 #include "ContactListener.h"
 #include "Constants.h"
+#include "GroundAreaFUD.h"
 #include "TrackScene.h"
 
 using namespace cocos2d;
@@ -39,12 +41,19 @@ TrackScene::TrackScene() : m_car(nullptr), m_world(nullptr),
 	m_world->SetDestructionListener(&m_destructionListener);
 	m_contactListener = new ContactListener();
 	m_world->SetContactListener(m_contactListener);
+
+	// Debug draw class (implement also draw())
+	m_debugDraw = new DebugDraw(1);
+	m_debugDraw->AppendFlags(b2Draw::e_shapeBit|b2Draw::e_jointBit|
+			b2Draw::e_aabbBit|b2Draw::e_pairBit|b2Draw::e_centerOfMassBit);
+	m_world->SetDebugDraw(m_debugDraw);
 }
 
 TrackScene::~TrackScene()
 {
 	delete m_world;
 	delete m_contactListener;
+	delete m_debugDraw;
 }
 
 /// Initialize the track scene
@@ -64,8 +73,6 @@ bool TrackScene::init()
 
 		m_car = new RaceCar("car.png", carPosX,	carPosY, m_world);
 
-		// enable touch
-		setTouchEnabled(true);
 		// enable keyboard
 		setKeyboardEnabled(true);
 
@@ -80,11 +87,11 @@ bool TrackScene::init()
 		fixtureDef.shape = &polygonShape;
 		fixtureDef.isSensor = true;
 
-		polygonShape.SetAsBox( 10, 10, b2Vec2(carPosX,carPosY), 20*DEGTORAD );
+		polygonShape.SetAsBox( 10/PTM, 10/PTM, b2Vec2(carPosX/PTM,carPosY/PTM), 20*DEGTORAD );
 		b2Fixture* groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
 		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.5f, 0.1f, carPosX/PTM, carPosY/PTM ) );
 
-		polygonShape.SetAsBox( 10, 10, b2Vec2(carPosX, carPosY), -40*DEGTORAD );
+		polygonShape.SetAsBox( 10/PTM, 10/PTM, b2Vec2(carPosX/PTM, carPosY/PTM), -40*DEGTORAD );
 		groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
 		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, 0.1f, carPosX, carPosY ) );
 
@@ -136,6 +143,17 @@ void TrackScene::menuCloseCallback(Object* pSender)
 	exit(0);
 }
 
+void TrackScene::draw()
+{
+	CCLayer::draw();
+
+	ccGLEnableVertexAttribs(cocos2d::kCCVertexAttribFlag_Position);
+	kmGLPushMatrix();
+	m_world->DrawDebugData();
+	kmGLPopMatrix();
+	CHECK_GL_ERROR_DEBUG();
+}
+
 void TrackScene::updateGame(float dt)
 {
 	m_car->update(m_controlState);
@@ -143,11 +161,9 @@ void TrackScene::updateGame(float dt)
 	m_world->Step(dt, 6, 2);
 
 	// Go through the bodies in world and update sprites
-	int i = 0;
-
 	for (auto body = m_world->GetBodyList(); body; body = body->GetNext())
 	{
-		//printf("Body %d: angle %f x:%f y:%f\n", ++i, body->GetAngle(), body->GetPosition().x, body->GetPosition().y);
+		//printf("Body : angle %f x:%f y:%f\n", body->GetAngle(), body->GetPosition().x, body->GetPosition().y);
 		if (body->GetUserData() != nullptr)
 		{
 			// Get user data from body
@@ -164,23 +180,22 @@ void TrackScene::updateGame(float dt)
 			for (auto fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 			{
 				// Get user data from fixture
-				auto user = static_cast<FixtureUserData*>(fixture->GetUserData());
-				if (user != nullptr)
+				auto userFixture = static_cast<FixtureUserData*>(fixture->GetUserData());
+				if (userFixture != nullptr)
 				{
-					const float x = body->GetPosition().x*PTM;
-					const float y = body->GetPosition().y*PTM;
-					sprite->setPosition(Point(x, y));
-					sprite->setRotation(body->GetAngle()*RADTODEG);
+					auto spriteFixture = userFixture->getSprite();
+					if (spriteFixture != nullptr)
+					{
+						const float x = body->GetPosition().x*PTM;
+						const float y = body->GetPosition().y*PTM;
+						spriteFixture->setPosition(Point(x, y));
+						spriteFixture->setRotation(body->GetAngle()*RADTODEG);
+					}
+
 				}
 			}
 		}
 	}
-	/*b2Vec2 position = m_car->getPosition();
-	float angle = m_car->getAngle();
-	printf("car position: x: %f, y:%f\n", position.x, position.y);
-	printf("car angle:%f\n", angle);*/
-
-
 	/* Go through contacts
 	if (m_contactListener->m_contacts.size() > 0)
 	{
@@ -243,34 +258,6 @@ void TrackScene::keyReleased(int keyCode)
 			break;
 		}
 };
-
-void TrackScene::ccTouchesBegan(Set *touches, Event *event)
-{
-	auto touch = static_cast<Touch*>( touches->anyObject() );
-	auto locPoint = Director::sharedDirector()->convertToGL(touch->getLocationInView());
-
-	float deltaX = locPoint.x - m_car->getPosition().x;
-	float deltaY = -(locPoint.y - m_car->getPosition().y);
-	float rads = atan2(deltaY, deltaX);
-}
-
-void TrackScene::ccTouchesMoved(cocos2d::Set *touches, cocos2d::Event *event)
-{
-	auto touch = static_cast<Touch*>( touches->anyObject() );
-	auto location = Director::sharedDirector()->convertToGL(touch->getLocationInView());
-
-	float deltaX = location.x - m_car->getPosition().x;
-	float deltaY = -(location.y - m_car->getPosition().y);
-	float rads = atan2(deltaY, deltaX);
-}
-
-void TrackScene::ccTouchesCancelled(Set* touches, Event* event)
-{
-}
-
-void TrackScene::ccTouchesEnded(Set* touches, Event* event)
-{
-}
 
 void TrackScene::registerWithTouchDispatcher()
 {
