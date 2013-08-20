@@ -46,7 +46,7 @@ TrackScene::TrackScene() : m_car(nullptr), m_world(nullptr),
 	m_debugDraw = new DebugDraw(1);
 	m_debugDraw->AppendFlags(b2Draw::e_shapeBit|b2Draw::e_jointBit|
 			b2Draw::e_aabbBit|b2Draw::e_pairBit|b2Draw::e_centerOfMassBit);
-	m_world->SetDebugDraw(m_debugDraw);
+	//m_world->SetDebugDraw(m_debugDraw);
 }
 
 TrackScene::~TrackScene()
@@ -77,7 +77,11 @@ bool TrackScene::init()
 		setKeyboardEnabled(true);
 
 		// Box2D stuff
-		//set up ground areas
+
+		// Add edges so you cannot drive over screen
+		addEdges(visibleSize);
+
+		/*//set up ground areas
 		b2BodyDef groundDef;
 		groundDef.position.Set(carPosX/PTM, carPosY/PTM);
 		m_groundBody = m_world->CreateBody(&groundDef);
@@ -93,7 +97,7 @@ bool TrackScene::init()
 
 		polygonShape.SetAsBox( 10/PTM, 10/PTM, b2Vec2(carPosX/PTM, carPosY/PTM), -40*DEGTORAD );
 		groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
-		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, 0.1f, carPosX, carPosY ) );
+		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, 0.1f, carPosX, carPosY ) );*/
 
 		// schedule updateGame to be called for every frame
 		schedule( schedule_selector(TrackScene::updateGame) );
@@ -106,6 +110,71 @@ bool TrackScene::init()
 		} while(0);
 
 		return retVal;
+}
+
+void TrackScene::addEdges(const Size& size)
+{
+	// Left edge
+	{
+		b2BodyDef edgeDef;
+		edgeDef.fixedRotation = true;
+		edgeDef.type = b2_dynamicBody;
+		auto body = m_world->CreateBody(&edgeDef);
+		b2PolygonShape edgePolygon;
+		edgePolygon.SetAsBox(1.0f, size.height/PTM, b2Vec2(0,0), 0);
+		b2FixtureDef edgeFixture;
+		edgeFixture.shape = &edgePolygon;
+		edgeFixture.restitution = 1.0f;
+		edgeFixture.density = 1.0f;
+		body->CreateFixture(&edgeFixture);
+	}
+
+
+	// Right edge
+	{
+		b2BodyDef edgeDef;
+		edgeDef.fixedRotation = true;
+		edgeDef.type = b2_dynamicBody;
+		auto body = m_world->CreateBody(&edgeDef);
+		b2PolygonShape edgePolygon;
+		edgePolygon.SetAsBox(1.0f/PTM, size.height/PTM, b2Vec2(size.width/PTM, 0), 0);
+		b2FixtureDef edgeFixture;
+		edgeFixture.shape = &edgePolygon;
+		edgeFixture.restitution = 1.0f;
+		edgeFixture.density = 1.0f;
+		body->CreateFixture(&edgeFixture);
+	}
+
+	// Top edge
+	{
+		b2BodyDef edgeDef;
+		edgeDef.fixedRotation = true;
+		edgeDef.type = b2_dynamicBody;
+		auto body = m_world->CreateBody(&edgeDef);
+		b2PolygonShape edgePolygon;
+		edgePolygon.SetAsBox(size.width/PTM, 1.0f/PTM, b2Vec2(0, size.height/PTM), 0);
+		b2FixtureDef edgeFixture;
+		edgeFixture.shape = &edgePolygon;
+		edgeFixture.restitution = 1.0f;
+		edgeFixture.density = 1.0f;
+		body->CreateFixture(&edgeFixture);
+	}
+
+
+	// Bottom edge
+	{
+		b2BodyDef edgeDef;
+		edgeDef.fixedRotation = true;
+		edgeDef.type = b2_dynamicBody;
+		auto body = m_world->CreateBody(&edgeDef);
+		b2PolygonShape edgePolygon;
+		edgePolygon.SetAsBox(size.width/PTM, 1.0f/PTM, b2Vec2(0, 0), 0);
+		b2FixtureDef edgeFixture;
+		edgeFixture.shape = &edgePolygon;
+		edgeFixture.restitution = 1.0f;
+		edgeFixture.density = 1.0f;
+		body->CreateFixture(&edgeFixture);
+	}
 }
 
 void TrackScene::addSpritesFromB2World()
@@ -137,13 +206,13 @@ void TrackScene::addSpritesFromB2World()
 	}
 }
 
-void TrackScene::menuCloseCallback(Object* pSender)
+void TrackScene::exitApp()
 {
 	Director::sharedDirector()->end();
 	exit(0);
 }
 
-void TrackScene::draw()
+/*void TrackScene::draw()
 {
 	CCLayer::draw();
 
@@ -152,16 +221,24 @@ void TrackScene::draw()
 	m_world->DrawDebugData();
 	kmGLPopMatrix();
 	CHECK_GL_ERROR_DEBUG();
-}
+}*/
 
 void TrackScene::updateGame(float dt)
 {
-	m_car->update(m_controlState);
+	if (m_paused)
+	{
+		dt = 0.0f; // paused
+	}
+	else
+	{
+		m_car->update(m_controlState);
+	}
+
 	// Instruct the world to perform a single step of simulation.
 	m_world->Step(dt, 6, 2);
 
 	// Go through the bodies in world and update sprites
-	for (auto body = m_world->GetBodyList(); body; body = body->GetNext())
+	for (auto body = m_world->GetBodyList(); body && !m_paused; body = body->GetNext())
 	{
 		//printf("Body : angle %f x:%f y:%f\n", body->GetAngle(), body->GetPosition().x, body->GetPosition().y);
 		if (body->GetUserData() != nullptr)
@@ -253,6 +330,12 @@ void TrackScene::keyReleased(int keyCode)
 			break;
 		case KEYCODE_RIGHT:
 			m_controlState &= ~CarControls::RIGHT;
+			break;
+		case 'P':
+			m_paused = !m_paused;
+			break;
+		case 'Q':
+			exitApp();
 			break;
 		default:
 			break;

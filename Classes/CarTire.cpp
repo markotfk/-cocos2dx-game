@@ -46,12 +46,12 @@ CarTire::~CarTire()
 
 b2Vec2 CarTire::getLateralVelocity()
 {
-      b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(1,0));
+      b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(0,1));
       return b2Dot( currentRightNormal, m_body->GetLinearVelocity()) * currentRightNormal;
 }
 b2Vec2 CarTire::getForwardVelocity()
 {
-    b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(0,1));
+    b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(1,0));
     return b2Dot( currentRightNormal, m_body->GetLinearVelocity()) * currentRightNormal;
 }
 
@@ -125,7 +125,7 @@ void CarTire::updateDrive(int controlState)
 			break;
 	}
 	//find current speed in forward direction
-	b2Vec2 currentForwardNormal = m_body->GetWorldVector( b2Vec2(0,1) );
+	b2Vec2 currentForwardNormal = m_body->GetWorldVector( b2Vec2(1,0) );
 	float currentSpeed = b2Dot( getForwardVelocity(), currentForwardNormal );
 
 	//apply necessary force
@@ -133,9 +133,13 @@ void CarTire::updateDrive(int controlState)
 	if (controlState & (CarControls::UP|CarControls::DOWN))
 	{
 		if ( desiredSpeed > currentSpeed )
+		{
 			force = m_maxDriveForce;
+		}
 		else if ( desiredSpeed < currentSpeed )
+		{
 			force = -m_maxDriveForce * 0.5f;
+		}
 	}
 
 	float speedFactor = currentSpeed / 120;

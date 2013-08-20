@@ -21,7 +21,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	carBodyDef.angle = 0;
 	carBodyDef.userData = this;
 	m_body = world->CreateBody(&carBodyDef);
-	m_body->SetAngularDamping(5);
+	m_body->SetAngularDamping(0.1f);
 
 	b2Vec2 vertices[6];
 	vertices[0].Set(0.0f, -15.0f/PTM);
@@ -31,7 +31,8 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	vertices[4].Set(-37.0f/PTM, 14.0f/PTM);
 	vertices[5].Set(-37.0f/PTM, -14.0f/PTM);
 	b2PolygonShape polygonShape;
-	polygonShape.Set(vertices, 6);
+	//polygonShape.Set(vertices, 6);
+	polygonShape.SetAsBox(30.0f/PTM, 75.0f/PTM, b2Vec2(0,0), 0);
 	m_body->CreateFixture(&polygonShape, 1.0f);//shape, density
 
 	//prepare common joint parameters
@@ -42,8 +43,8 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	jointDef.upperAngle = 0;
 	jointDef.localAnchorB.SetZero();//center of tire
 
-	float maxForwardSpeed = 250;
-	float maxBackwardSpeed = -40;
+	float maxForwardSpeed = 220;
+	float maxBackwardSpeed = -80;
 	float backTireMaxDriveForce = 750;
 	float frontTireMaxDriveForce = 400;
 	float backTireMaxLateralImpulse = 9;
@@ -70,7 +71,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
 	jointDef.localAnchorA.Set( 20.0f/PTM, 12.0f/PTM );
-	m_flJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
+	m_flJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
 	//front right tire
@@ -78,7 +79,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
 	jointDef.localAnchorA.Set( 20.0f/PTM, -12.0f/PTM );
-	m_frJoint = (b2RevoluteJoint*)world->CreateJoint( &jointDef );
+	m_frJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 }
 

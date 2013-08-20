@@ -26,7 +26,7 @@ public:
 	// implement the "static node()" method manually
 	CREATE_FUNC(TrackScene);
 	virtual bool init();
-	virtual void menuCloseCallback(cocos2d::Object* pSender);
+	void exitApp();
 
 	void updateGame(float dt);
 
@@ -35,9 +35,10 @@ public:
 	void registerWithTouchDispatcher();
 	void keyPressed(int keyCode);
 	void keyReleased(int keyCode);
-	void draw();
+	//void draw();
 private:
 	void addSpritesFromB2World();
+	void addEdges(const cocos2d::Size& size);
 
 private:
 	RaceCar *m_car;
@@ -47,6 +48,7 @@ private:
 	DestructionListener m_destructionListener;
 	ContactListener *m_contactListener;
 	int m_controlState;
+	bool m_paused;
 };
 
 #endif /* TRACKSCENE_H_ */
