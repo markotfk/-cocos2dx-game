@@ -32,7 +32,8 @@ cocos2d::Scene* TrackScene::scene()
 }
 
 TrackScene::TrackScene() : m_car(nullptr), m_world(nullptr),
-		m_groundBody(nullptr), m_contactListener(nullptr), m_controlState(CarControls::NONE)
+		m_groundBody(nullptr), m_contactListener(nullptr), m_controlState(CarControls::NONE),
+		m_paused(false)
 {
 	const b2Vec2 gravity(0.0f, 0.0f);
 	m_world = new b2World(gravity);
@@ -209,7 +210,8 @@ void TrackScene::exitApp()
 	exit(0);
 }
 
-/*void TrackScene::draw()
+/*
+void TrackScene::draw()
 {
 	CCLayer::draw();
 
@@ -218,8 +220,8 @@ void TrackScene::exitApp()
 	m_world->DrawDebugData();
 	kmGLPopMatrix();
 	CHECK_GL_ERROR_DEBUG();
-}*/
-
+}
+*/
 void TrackScene::updateGame(float dt)
 {
 	if (m_paused)

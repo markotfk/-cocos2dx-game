@@ -31,8 +31,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	vertices[4].Set(-37.0f/PTM, 14.0f/PTM);
 	vertices[5].Set(-37.0f/PTM, -14.0f/PTM);
 	b2PolygonShape polygonShape;
-	//polygonShape.Set(vertices, 6);
-	polygonShape.SetAsBox(30.0f/PTM, 75.0f/PTM, b2Vec2(0,0), 0);
+	polygonShape.Set(vertices, 6);
 	m_body->CreateFixture(&polygonShape, 1.0f);//shape, density
 
 	//prepare common joint parameters
