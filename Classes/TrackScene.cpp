@@ -51,6 +51,7 @@ TrackScene::TrackScene() : m_car(nullptr), m_world(nullptr),
 
 TrackScene::~TrackScene()
 {
+	delete m_car;
 	delete m_world;
 	delete m_contactListener;
 	delete m_debugDraw;
@@ -117,14 +118,13 @@ void TrackScene::addEdges(const Size& size)
 	// Left edge
 	{
 		b2BodyDef edgeDef;
-		edgeDef.fixedRotation = true;
-		edgeDef.type = b2_dynamicBody;
+		edgeDef.bullet = true;
 		auto body = m_world->CreateBody(&edgeDef);
 		b2PolygonShape edgePolygon;
-		edgePolygon.SetAsBox(1.0f, size.height/PTM, b2Vec2(0,0), 0);
+		edgePolygon.SetAsBox(0.01f/PTM, size.height/PTM, b2Vec2(0,(size.height/2)/PTM), 0);
 		b2FixtureDef edgeFixture;
 		edgeFixture.shape = &edgePolygon;
-		edgeFixture.restitution = 1.0f;
+		edgeFixture.restitution = 0.3f;
 		edgeFixture.density = 1.0f;
 		body->CreateFixture(&edgeFixture);
 	}
@@ -133,14 +133,13 @@ void TrackScene::addEdges(const Size& size)
 	// Right edge
 	{
 		b2BodyDef edgeDef;
-		edgeDef.fixedRotation = true;
-		edgeDef.type = b2_dynamicBody;
+		edgeDef.bullet = true;
 		auto body = m_world->CreateBody(&edgeDef);
 		b2PolygonShape edgePolygon;
-		edgePolygon.SetAsBox(1.0f/PTM, size.height/PTM, b2Vec2(size.width/PTM, 0), 0);
+		edgePolygon.SetAsBox(0.01f/PTM, size.height/PTM, b2Vec2(size.width/PTM, (size.height/2)/PTM), 0);
 		b2FixtureDef edgeFixture;
 		edgeFixture.shape = &edgePolygon;
-		edgeFixture.restitution = 1.0f;
+		edgeFixture.restitution = 0.3f;
 		edgeFixture.density = 1.0f;
 		body->CreateFixture(&edgeFixture);
 	}
@@ -148,14 +147,13 @@ void TrackScene::addEdges(const Size& size)
 	// Top edge
 	{
 		b2BodyDef edgeDef;
-		edgeDef.fixedRotation = true;
-		edgeDef.type = b2_dynamicBody;
+		edgeDef.bullet = true;
 		auto body = m_world->CreateBody(&edgeDef);
 		b2PolygonShape edgePolygon;
-		edgePolygon.SetAsBox(size.width/PTM, 1.0f/PTM, b2Vec2(0, size.height/PTM), 0);
+		edgePolygon.SetAsBox(size.width/PTM, 0.01f/PTM, b2Vec2((size.width/2)/PTM, size.height/PTM), 0);
 		b2FixtureDef edgeFixture;
 		edgeFixture.shape = &edgePolygon;
-		edgeFixture.restitution = 1.0f;
+		edgeFixture.restitution = 0.3f;
 		edgeFixture.density = 1.0f;
 		body->CreateFixture(&edgeFixture);
 	}
@@ -164,14 +162,13 @@ void TrackScene::addEdges(const Size& size)
 	// Bottom edge
 	{
 		b2BodyDef edgeDef;
-		edgeDef.fixedRotation = true;
-		edgeDef.type = b2_dynamicBody;
+		edgeDef.bullet = true;
 		auto body = m_world->CreateBody(&edgeDef);
 		b2PolygonShape edgePolygon;
-		edgePolygon.SetAsBox(size.width/PTM, 1.0f/PTM, b2Vec2(0, 0), 0);
+		edgePolygon.SetAsBox(size.width/PTM, 0.01f/PTM, b2Vec2((size.width/2)/PTM, 0), 0);
 		b2FixtureDef edgeFixture;
 		edgeFixture.shape = &edgePolygon;
-		edgeFixture.restitution = 1.0f;
+		edgeFixture.restitution = 0.3f;
 		edgeFixture.density = 1.0f;
 		body->CreateFixture(&edgeFixture);
 	}
