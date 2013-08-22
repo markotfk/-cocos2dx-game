@@ -250,7 +250,7 @@ void TrackScene::updateGame(float dt)
 				const float x = body->GetPosition().x*PTM;
 				const float y = body->GetPosition().y*PTM;
 				sprite->setPosition(Point(x, y));
-				sprite->setRotation(body->GetAngle()*RADTODEG);
+				sprite->setRotation(-body->GetAngle()*RADTODEG);
 			}
 			// Go through body fixtures
 			for (auto fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
@@ -265,7 +265,7 @@ void TrackScene::updateGame(float dt)
 						const float x = body->GetPosition().x*PTM;
 						const float y = body->GetPosition().y*PTM;
 						spriteFixture->setPosition(Point(x, y));
-						spriteFixture->setRotation(body->GetAngle()*RADTODEG);
+						spriteFixture->setRotation(-body->GetAngle()*RADTODEG);
 					}
 
 				}
