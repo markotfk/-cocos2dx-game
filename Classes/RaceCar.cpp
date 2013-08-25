@@ -11,7 +11,8 @@
 #include "Constants.h"
 #include "RaceCar.h"
 
-RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : FixtureUserData(carFileName,
+RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) :
+m_world(world), FixtureUserData(carFileName,
 		FixtureUserDataType::CAR)
 {
 	//create car body
@@ -20,7 +21,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	carBodyDef.position = b2Vec2(x/PTM, y/PTM);
 	carBodyDef.angle = 0;
 	carBodyDef.userData = this;
-	m_body = world->CreateBody(&carBodyDef);
+	m_body = m_world->CreateBody(&carBodyDef);
 	m_body->SetAngularDamping(0.1f);
 
 	b2Vec2 vertices[6];
@@ -54,7 +55,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
 	jointDef.localAnchorA.Set(-25.0f/PTM, 12.0f/PTM);
-	world->CreateJoint(&jointDef);
+	m_world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
 	//back right tire
@@ -62,7 +63,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
 	jointDef.localAnchorA.Set( -25.0f/PTM, -12.0f/PTM );
-	world->CreateJoint(&jointDef);
+	m_world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
 	//front left tire
@@ -70,7 +71,7 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
 	jointDef.localAnchorA.Set( 20.0f/PTM, 12.0f/PTM );
-	m_flJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
+	m_flJoint = (b2RevoluteJoint*)m_world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
 	//front right tire
@@ -78,13 +79,14 @@ RaceCar::RaceCar(const char* carFileName, float x, float y, b2World* world) : Fi
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
 	jointDef.localAnchorA.Set( 20.0f/PTM, -12.0f/PTM );
-	m_frJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
+	m_frJoint = (b2RevoluteJoint*)m_world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 }
 
 RaceCar::~RaceCar() {
 	for (int i = 0; i < m_tires.size(); ++i)
         delete m_tires[i];
+
 }
 void RaceCar::update(int controlState)
 {

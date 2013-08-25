@@ -19,5 +19,4 @@ FixtureUserData::FixtureUserData(const char *fileName, FixtureUserDataType type)
 
 FixtureUserData::~FixtureUserData()
 {
-	 CC_SAFE_RELEASE_NULL(m_sprite);
 }

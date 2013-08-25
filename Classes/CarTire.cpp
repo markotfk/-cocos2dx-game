@@ -38,10 +38,6 @@ CarTire::~CarTire()
 	{
 		m_body->GetWorld()->DestroyBody(m_body);
 	}
-	for (auto i = m_groundAreas.begin(); i != m_groundAreas.end(); ++i)
-	{
-		delete *i;
-	}
 }
 
 b2Vec2 CarTire::getLateralVelocity()

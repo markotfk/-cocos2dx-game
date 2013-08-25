@@ -32,7 +32,6 @@ public:
 
 	void addTarget();
 	void spriteMoveFinished(cocos2d::Node* sender);
-	void registerWithTouchDispatcher();
 	void keyPressed(int keyCode);
 	void keyReleased(int keyCode);
 	//void draw();

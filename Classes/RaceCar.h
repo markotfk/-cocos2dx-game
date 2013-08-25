@@ -27,6 +27,7 @@ public:
 	inline b2Body *getBody() { return m_body; };
 
 private:
+	b2World* m_world;
 	b2Body* m_body;
 	std::vector<CarTire*> m_tires;
 	b2RevoluteJoint *m_flJoint, *m_frJoint;

@@ -86,24 +86,6 @@ bool TrackScene::init()
 		// Add edges so you cannot drive over screen
 		addEdges(visibleSize);
 
-		/*//set up ground areas
-		b2BodyDef groundDef;
-		groundDef.position.Set(carPosX/PTM, carPosY/PTM);
-		m_groundBody = m_world->CreateBody(&groundDef);
-
-		b2PolygonShape polygonShape;
-		b2FixtureDef fixtureDef;
-		fixtureDef.shape = &polygonShape;
-		fixtureDef.isSensor = true;
-
-		polygonShape.SetAsBox( 10/PTM, 10/PTM, b2Vec2(carPosX/PTM,carPosY/PTM), 20*DEGTORAD );
-		b2Fixture* groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
-		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.5f, 0.1f, carPosX/PTM, carPosY/PTM ) );
-
-		polygonShape.SetAsBox( 10/PTM, 10/PTM, b2Vec2(carPosX/PTM, carPosY/PTM), -40*DEGTORAD );
-		groundAreaFixture = m_groundBody->CreateFixture(&fixtureDef);
-		groundAreaFixture->SetUserData( new GroundAreaFUD( 0.2f, 0.1f, carPosX, carPosY ) );*/
-
 		// schedule updateGame to be called for every frame
 		schedule( schedule_selector(TrackScene::updateGame) );
 
@@ -119,9 +101,9 @@ bool TrackScene::init()
 
 void TrackScene::addTileMap(const char *tileMapFile)
 {
-	CCTMXTiledMap *map = CCTMXTiledMap::create(tileMapFile);
-	addChild(map, 0, 1);
-	CCArray * pChildrenArray = map->getChildren();
+	auto tileMap = CCTMXTiledMap::create(tileMapFile);
+	addChild(tileMap, 0, 1);
+	CCArray * pChildrenArray = tileMap->getChildren();
 	CCObject* pObject = NULL;
 	CCARRAY_FOREACH(pChildrenArray, pObject)
 	{
@@ -358,10 +340,5 @@ void TrackScene::keyReleased(int keyCode)
 			break;
 		}
 };
-
-void TrackScene::registerWithTouchDispatcher()
-{
-	Director::sharedDirector()->getTouchDispatcher()->addStandardDelegate(this,0);
-}
 
 
