@@ -69,6 +69,9 @@ bool TrackScene::init()
 		Size visibleSize = Director::sharedDirector()->getVisibleSize();
 		Point origin = Director::sharedDirector()->getVisibleOrigin();
 
+		// create a TMX map
+		addTileMap("tiles.tmx");
+
 		// Initialize the race car
 		float carPosX = origin.x + visibleSize.width/2;
 		float carPosY = origin.y + visibleSize.height/2;
@@ -112,6 +115,21 @@ bool TrackScene::init()
 		} while(0);
 
 		return retVal;
+}
+
+void TrackScene::addTileMap(const char *tileMapFile)
+{
+	CCTMXTiledMap *map = CCTMXTiledMap::create(tileMapFile);
+	addChild(map, 0, 1);
+	CCArray * pChildrenArray = map->getChildren();
+	CCObject* pObject = NULL;
+	CCARRAY_FOREACH(pChildrenArray, pObject)
+	{
+		auto child = (CCSpriteBatchNode*)pObject;
+		if(!child)
+			break;
+		child->getTexture()->setAntiAliasTexParameters();
+	}
 }
 
 void TrackScene::addEdges(const Size& size)
@@ -220,8 +238,8 @@ void TrackScene::draw()
 	m_world->DrawDebugData();
 	kmGLPopMatrix();
 	CHECK_GL_ERROR_DEBUG();
-}
-*/
+}*/
+
 void TrackScene::updateGame(float dt)
 {
 	if (m_paused)

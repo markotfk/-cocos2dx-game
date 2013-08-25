@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="80" height="60" tilewidth="20" tileheight="20">
+ <tileset firstgid="1" name="rallitiles" tilewidth="20" tileheight="20">
+  <image source="grass20.png" width="20" height="20"/>
+ </tileset>
+ <layer name="grass" width="80" height="60">
+  <data encoding="base64" compression="zlib">
+   eJztw0ENAAAMA6Grf9NzsRckrJqqqqqqqqqqqqqqqqqqqqqqqqo+PbmxEsE=
+  </data>
+ </layer>
+</map>

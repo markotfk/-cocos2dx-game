@@ -37,6 +37,7 @@ public:
 	void keyReleased(int keyCode);
 	//void draw();
 private:
+	void addTileMap(const char *tileMapFile);
 	void addSpritesFromB2World();
 	void addEdges(const cocos2d::Size& size);
 
