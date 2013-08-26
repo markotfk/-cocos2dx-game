@@ -101,13 +101,13 @@ bool TrackScene::init()
 
 void TrackScene::addTileMap(const char *tileMapFile)
 {
-	auto tileMap = CCTMXTiledMap::create(tileMapFile);
-	addChild(tileMap, 0, 1);
-	CCArray * pChildrenArray = tileMap->getChildren();
-	CCObject* pObject = NULL;
+	m_tileMap = cocos2d::TMXTiledMap::create(tileMapFile);
+	addChild(m_tileMap, 0, 1);
+	Array * pChildrenArray = m_tileMap->getChildren();
+	Object* pObject = NULL;
 	CCARRAY_FOREACH(pChildrenArray, pObject)
 	{
-		auto child = (CCSpriteBatchNode*)pObject;
+		auto child = (SpriteBatchNode*)pObject;
 		if(!child)
 			break;
 		child->getTexture()->setAntiAliasTexParameters();
@@ -249,8 +249,13 @@ void TrackScene::updateGame(float dt)
 			{
 				const float x = body->GetPosition().x*PTM;
 				const float y = body->GetPosition().y*PTM;
-				sprite->setPosition(Point(x, y));
+				Point p(x, y);
+				sprite->setPosition(p);
 				sprite->setRotation(-body->GetAngle()*RADTODEG);
+
+				// Get tile map sprite
+				/*auto layer = m_tileMap->getLayer("grass");
+				auto sprite = layer->getTileAt(p);*/
 			}
 			// Go through body fixtures
 			for (auto fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())

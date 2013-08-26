@@ -15,6 +15,7 @@
 
 class RaceCar;
 class DebugDraw;
+class TMXTiledMap;
 
 class TrackScene: public cocos2d::LayerColor {
 public:
@@ -47,6 +48,7 @@ private:
 	b2Body* m_groundBody;
 	DestructionListener m_destructionListener;
 	ContactListener *m_contactListener;
+	cocos2d::TMXTiledMap *m_tileMap;
 	int m_controlState;
 	bool m_paused;
 };
