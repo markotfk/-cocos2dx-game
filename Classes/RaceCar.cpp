@@ -25,12 +25,12 @@ m_world(world), FixtureUserData(carFileName,
 	m_body->SetAngularDamping(0.1f);
 
 	b2Vec2 vertices[6];
-	vertices[0].Set(0.0f, -15.0f/PTM);
-	vertices[1].Set(37.0f/PTM, -12.0f/PTM);
-	vertices[2].Set(37.0f/PTM, 12.0f/PTM);
-	vertices[3].Set(0.0f, 15.0f/PTM);
-	vertices[4].Set(-37.0f/PTM, 14.0f/PTM);
-	vertices[5].Set(-37.0f/PTM, -14.0f/PTM);
+	vertices[0].Set(0.0f, -9.0f/PTM);
+	vertices[1].Set(22.0f/PTM, -8.0f/PTM);
+	vertices[2].Set(22.0f/PTM, 8.0f/PTM);
+	vertices[3].Set(0.0f, 9.0f/PTM);
+	vertices[4].Set(-22.0f/PTM, 8.0f/PTM);
+	vertices[5].Set(-22.0f/PTM, -8.0f/PTM);
 	b2PolygonShape polygonShape;
 	polygonShape.Set(vertices, 6);
 	m_body->CreateFixture(&polygonShape, 1.0f);//shape, density
@@ -43,18 +43,18 @@ m_world(world), FixtureUserData(carFileName,
 	jointDef.upperAngle = 0;
 	jointDef.localAnchorB.SetZero();//center of tire
 
-	float maxForwardSpeed = 220;
-	float maxBackwardSpeed = -80;
-	float backTireMaxDriveForce = 750;
-	float frontTireMaxDriveForce = 400;
-	float backTireMaxLateralImpulse = 9;
-	float frontTireMaxLateralImpulse = 9;
+	float maxForwardSpeed = 100;
+	float maxBackwardSpeed = -40;
+	float backTireMaxDriveForce = 40;
+	float frontTireMaxDriveForce = 15;
+	float backTireMaxLateralImpulse = 4;
+	float frontTireMaxLateralImpulse = 4;
 
 	//back left tire
 	CarTire* tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set(-25.0f/PTM, 12.0f/PTM);
+	jointDef.localAnchorA.Set(-16.0f/PTM, 8.0f/PTM);
 	m_world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
@@ -62,7 +62,7 @@ m_world(world), FixtureUserData(carFileName,
 	tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, backTireMaxDriveForce, backTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( -25.0f/PTM, -12.0f/PTM );
+	jointDef.localAnchorA.Set( -16.0f/PTM, -8.0f/PTM );
 	m_world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
@@ -70,7 +70,7 @@ m_world(world), FixtureUserData(carFileName,
 	tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( 20.0f/PTM, 12.0f/PTM );
+	jointDef.localAnchorA.Set( 16.0f/PTM, 8.0f/PTM );
 	m_flJoint = (b2RevoluteJoint*)m_world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 
@@ -78,7 +78,7 @@ m_world(world), FixtureUserData(carFileName,
 	tire = new CarTire(world);
 	tire->setCharacteristics(maxForwardSpeed, maxBackwardSpeed, frontTireMaxDriveForce, frontTireMaxLateralImpulse);
 	jointDef.bodyB = tire->m_body;
-	jointDef.localAnchorA.Set( 20.0f/PTM, -12.0f/PTM );
+	jointDef.localAnchorA.Set( 16.0f/PTM, -8.0f/PTM );
 	m_frJoint = (b2RevoluteJoint*)m_world->CreateJoint(&jointDef);
 	m_tires.push_back(tire);
 }

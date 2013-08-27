@@ -20,6 +20,13 @@ enum CarControls {
     DOWN = 	0x8,
 };
 
+enum
+{
+   kFilterCategoryLevel = 0x01,
+   kFilterCategorySolidObject = 0x02,
+   kFilterCategoryNonSolidObject = 0x04
+};
+
 const int KEYCODE_UP = 283;
 const int KEYCODE_DOWN = 284;
 const int KEYCODE_LEFT = 285;

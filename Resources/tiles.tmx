@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.0" orientation="orthogonal" width="80" height="60" tilewidth="20" tileheight="20">
  <tileset firstgid="1" name="rallitiles" tilewidth="20" tileheight="20">
   <image source="grass20.png" width="20" height="20"/>
  </tileset>
+ <tileset firstgid="2" name="road" tilewidth="20" tileheight="20">
+  <image source="road20.png" width="20" height="20"/>
+ </tileset>
  <layer name="grass" width="80" height="60">
   <data encoding="base64" compression="zlib">
    eJztw0ENAAAMA6Grf9NzsRckrJqqqqqqqqqqqqqqqqqqqqqqqqo+PbmxEsE=
+  </data>
+ </layer>
+ <layer name="Tile Layer 2road" width="80" height="60">
+  <data encoding="base64" compression="zlib">
+   eJzt1UEOwjAMRNGI+x8aZdENAmSSNDMT/pe8rv2oSmtERPTa45BRpL452VN9X7Kj+qZkR/Ud+OXOitQ34Jc9O/wSwm9Nbn5p4fdb7t8/pxL/P5Td4fUvfjvs8NO5VfdUlGJX2VVRglt1V0UOLtUcd0ux67nud/c3cNVvg9/c/fjNObr6tTe7JPph+N3B3e9KbffJYvb9VZTo52bYS/NT7+pgqH7+HYazney307EN7KF2cTMc2UHt4mQ4+ny1i4vhzLPVLglTSb2j81RT7+k6bqk90v16apN0v57aJd3vSu2T7tdTGyXbERERERERERGd0BOrKQ6j
   </data>
  </layer>
 </map>

@@ -20,7 +20,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setOpenGLView(EGLView::sharedOpenGLView());
     
     Size screenSize = EGLView::sharedOpenGLView()->getFrameSize();
-    Size designSize = CCSizeMake(1024, 768);
+    Size designSize = CCSizeMake(1600, 1200);
     
     EGLView::sharedOpenGLView()->setDesignResolutionSize(designSize.width, designSize.height, kResolutionNoBorder);
 

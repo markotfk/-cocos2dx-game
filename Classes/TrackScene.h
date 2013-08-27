@@ -17,6 +17,7 @@ class RaceCar;
 class DebugDraw;
 class TMXTiledMap;
 
+
 class TrackScene: public cocos2d::LayerColor {
 public:
 	static cocos2d::Scene* scene();
@@ -40,6 +41,11 @@ private:
 	void addTileMap(const char *tileMapFile);
 	void addSpritesFromB2World();
 	void addEdges(const cocos2d::Size& size);
+
+	void prepareLayers();
+	void createFixtures(cocos2d::TMXLayer* layer);
+	void createRectangularFixture(cocos2d::TMXLayer* layer, int x, int y, float width, float height);
+
 
 private:
 	RaceCar *m_car;

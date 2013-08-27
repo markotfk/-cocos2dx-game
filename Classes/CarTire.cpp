@@ -15,7 +15,7 @@
 CarTire::CarTire(b2World* world) : m_maxForwardSpeed(0), m_maxBackwardSpeed(0),
 	m_maxDriveForce(0), m_maxLateralImpulse(0), m_currentTraction(0),
 	m_lastDriveImpulse(0), m_lastLateralFrictionImpulse(0),
-	FixtureUserData("road10.png", FixtureUserDataType::CAR_TIRE)
+	FixtureUserData(nullptr, FixtureUserDataType::CAR_TIRE)
 {
 	m_currentTraction = 1/PTM;
 	m_currentDrag = 1/PTM;
@@ -26,7 +26,7 @@ CarTire::CarTire(b2World* world) : m_maxForwardSpeed(0), m_maxBackwardSpeed(0),
 	m_body = world->CreateBody(&tireBodyDef);
 
 	b2PolygonShape polygonShape;
-	polygonShape.SetAsBox(5.0f/PTM, 3.0f/PTM);
+	polygonShape.SetAsBox(4.0f/PTM, 2.0f/PTM);
 	m_body->CreateFixture(&polygonShape, 1.0f);//shape, density
 
 	m_body->SetUserData(this);
@@ -172,10 +172,10 @@ void CarTire::updateTurn(int controlState)
 	switch (controlState & (CarControls::LEFT|CarControls::RIGHT))
 	{
 		case CarControls::LEFT:
-			desiredTorque = 15/PTM;
+			desiredTorque = 6/PTM;
 			break;
 		case CarControls::RIGHT:
-			desiredTorque = -15/PTM;
+			desiredTorque = -6/PTM;
 			break;
 		default: ;//nothing
 	}

@@ -64,7 +64,7 @@ bool TrackScene::init()
 	bool retVal = false;
 	do {
 		// super init first
-		CC_BREAK_IF(!LayerColor::initWithColor( ccc4(225,225,225,225), 1024, 768 ) );
+		CC_BREAK_IF(!LayerColor::initWithColor( ccc4(225,225,225,225), 1600, 1200 ) );
 
 		Size visibleSize = Director::sharedDirector()->getVisibleSize();
 		Point origin = Director::sharedDirector()->getVisibleOrigin();
@@ -82,7 +82,6 @@ bool TrackScene::init()
 		setKeyboardEnabled(true);
 
 		// Box2D stuff
-
 		// Add edges so you cannot drive over screen
 		addEdges(visibleSize);
 
@@ -112,6 +111,64 @@ void TrackScene::addTileMap(const char *tileMapFile)
 			break;
 		child->getTexture()->setAntiAliasTexParameters();
 	}
+	//prepareLayers();
+}
+void TrackScene::prepareLayers()
+{
+	Object* object = nullptr;
+    CCARRAY_FOREACH(m_tileMap->getChildren(), object)
+    {
+       // is this map child a tile layer?
+       TMXLayer* layer = dynamic_cast<TMXLayer*>(object);
+       if( layer != nullptr )
+          this->createFixtures(layer);
+    }
+}
+
+void TrackScene::createFixtures(TMXLayer* layer)
+{
+   // create all the rectangular fixtures for each tile in the level
+   Size layerSize = layer->getLayerSize();
+   for( int y=0; y < layerSize.height; y++ )
+   {
+      for( int x=0; x < layerSize.width; x++ )
+      {
+         // create a fixture if this tile has a sprite
+         Sprite* tileSprite = layer->tileAt(ccp(x, y));
+         if( tileSprite )
+            this->createRectangularFixture(layer, x, y, 1.1f, 1.1f);
+      }
+   }
+}
+
+void TrackScene::createRectangularFixture(TMXLayer* layer, int x, int y,
+   float width, float height)
+{
+   // get position & size
+   const Point p = layer->positionAt(ccp(x,y));
+   const Size tileSize = m_tileMap->getTileSize();
+
+   // create the body
+   b2BodyDef bodyDef;
+   bodyDef.type = b2_staticBody;
+   bodyDef.position.Set((p.x + (tileSize.width / 2.0f)) / PTM,
+      (p.y + (tileSize.height / 2.0f)) / PTM);
+   b2Body* body = m_world->CreateBody(&bodyDef);
+
+   // define the shape
+   b2PolygonShape shape;
+   shape.SetAsBox((tileSize.width / PTM) * 0.5f * width,
+      (tileSize.width / PTM) * 0.5f * height);
+
+   // create the fixture
+   b2FixtureDef fixtureDef;
+   fixtureDef.shape = &shape;
+   fixtureDef.density = 0.0f;
+   fixtureDef.friction = 0.0f;
+   fixtureDef.restitution = 0.0f;
+   fixtureDef.filter.categoryBits = kFilterCategoryLevel;
+   fixtureDef.filter.maskBits = 0xffff;
+   body->CreateFixture(&fixtureDef);
 }
 
 void TrackScene::addEdges(const Size& size)
@@ -213,7 +270,7 @@ void TrackScene::exitApp()
 /*
 void TrackScene::draw()
 {
-	CCLayer::draw();
+	Layer::draw();
 
 	ccGLEnableVertexAttribs(cocos2d::kCCVertexAttribFlag_Position);
 	kmGLPushMatrix();
@@ -252,10 +309,6 @@ void TrackScene::updateGame(float dt)
 				Point p(x, y);
 				sprite->setPosition(p);
 				sprite->setRotation(-body->GetAngle()*RADTODEG);
-
-				// Get tile map sprite
-				/*auto layer = m_tileMap->getLayer("grass");
-				auto sprite = layer->getTileAt(p);*/
 			}
 			// Go through body fixtures
 			for (auto fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())

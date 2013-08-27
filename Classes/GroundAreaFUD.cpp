@@ -8,7 +8,7 @@
 #include "GroundAreaFUD.h"
 
 GroundAreaFUD::GroundAreaFUD(float friction, float drag, float x, float y) :
-	FixtureUserData("grass20.png", FixtureUserDataType::GROUND_AREA) 
+	FixtureUserData(nullptr, FixtureUserDataType::GROUND_AREA)
 	{
 	    frictionModifier = friction;
 	    dragModifier = drag;
