@@ -12,9 +12,12 @@
    eJztw0ENAAAMA6Grf9NzsRckrJqqqqqqqqqqqqqqqqqqqqqqqqo+PbmxEsE=
   </data>
  </layer>
- <layer name="Tile Layer 2road" width="80" height="60">
+ <layer name="road" width="80" height="60">
   <data encoding="base64" compression="zlib">
-   eJzt1UEOwjAMRNGI+x8aZdENAmSSNDMT/pe8rv2oSmtERPTa45BRpL452VN9X7Kj+qZkR/Ud+OXOitQ34Jc9O/wSwm9Nbn5p4fdb7t8/pxL/P5Td4fUvfjvs8NO5VfdUlGJX2VVRglt1V0UOLtUcd0ux67nud/c3cNVvg9/c/fjNObr6tTe7JPph+N3B3e9KbffJYvb9VZTo52bYS/NT7+pgqH7+HYazney307EN7KF2cTMc2UHt4mQ4+ny1i4vhzLPVLglTSb2j81RT7+k6bqk90v16apN0v57aJd3vSu2T7tdTGyXbERERERERERGd0BOrKQ6j
+   eJzt1EGOAyEQQ9Eo9z90xKI3URIRXIVt2l9iOYF6zfB4pJRO7XnY2hl7VmdP9lzOjuxZnA3ZM7BX7HiG7HOrrPh5+Cmm7ucQy/AUvys1P6cU759yFf+zd/Kr9qqY08Gv0w2dUd1P2W7mfOyU7WbOx0zZbfaMzJTdZs/ITM1q5YzM4ofV9f5VfgNlv5G6YfwwR3W/EdsO8YvhbwcXvxHb75MFen935+qnZHjl5lexd/X3upPfiuGsI5KLH7pfZw5+qGF3q2dwsFO5g8jfnm6I7u1gp+z3z++caFi5r7JdlyHz7q8UPzwlQ0e/KwVDZ78R29Ddb8QwZL65He0yZL+3nXUbst/aHSGG32Zlv7E7Q/3eZ+74HupVGFYt19huznYjtp273yh2WPHDix1e7GqKWU0x8+sFOqAQ2Q==
   </data>
  </layer>
+ <objectgroup draworder="topdown" name="finish" width="80" height="60">
+  <object name="finishline" x="603" y="620" width="34" height="229"/>
+ </objectgroup>
 </map>
