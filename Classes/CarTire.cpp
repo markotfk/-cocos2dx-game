@@ -172,10 +172,10 @@ void CarTire::updateTurn(int controlState)
 	switch (controlState & (CarControls::LEFT|CarControls::RIGHT))
 	{
 		case CarControls::LEFT:
-			desiredTorque = 6/PTM;
+			desiredTorque = 1.0f/PTM;
 			break;
 		case CarControls::RIGHT:
-			desiredTorque = -6/PTM;
+			desiredTorque = -1.0f/PTM;
 			break;
 		default: ;//nothing
 	}

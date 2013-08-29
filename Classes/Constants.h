@@ -32,6 +32,9 @@ const int KEYCODE_DOWN = 284;
 const int KEYCODE_LEFT = 285;
 const int KEYCODE_RIGHT = 286;
 
+const float LOCK_ANGLE = 45 * DEGTORAD;
+const float TURNSPEED_PER_SEC = 320 * DEGTORAD;//from lock to lock in 0.25 sec
+const float TURN_PER_TIME_STEP = TURNSPEED_PER_SEC / 60.0f;
 const float PTM = 32.0f;
 
 #endif /* CONSTANTS_H_ */
