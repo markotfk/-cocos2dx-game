@@ -32,8 +32,8 @@ cocos2d::Scene* TrackScene::scene()
 }
 
 TrackScene::TrackScene() : m_car(nullptr), m_world(nullptr),
-		m_groundBody(nullptr), m_contactListener(nullptr), m_controlState(CarControls::NONE),
-		m_paused(false)
+		m_groundBody(nullptr), m_contactListener(nullptr), m_tileMap(nullptr),
+		m_controlState(CarControls::NONE), m_paused(false)
 {
 	const b2Vec2 gravity(0.0f, 0.0f);
 	m_world = new b2World(gravity);
@@ -86,7 +86,7 @@ bool TrackScene::init()
 		addEdges(visibleSize);
 
 		// schedule updateGame to be called for every frame
-		schedule( schedule_selector(TrackScene::updateGame) );
+		schedule(schedule_selector(TrackScene::updateGame));
 
 		// Add sprites to scene
 		addSpritesFromB2World();
@@ -136,7 +136,7 @@ void TrackScene::createFixtures(TMXLayer* layer)
          // create a fixture if this tile has a sprite
          Sprite* tileSprite = layer->tileAt(ccp(x, y));
          if( tileSprite )
-            this->createRectangularFixture(layer, x, y, 1.1f, 1.1f);
+            this->createRectangularFixture(layer, x, y, 20.0f/PTM, 20.0f/PTM);
       }
    }
 }

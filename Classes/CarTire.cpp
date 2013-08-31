@@ -17,8 +17,8 @@ CarTire::CarTire(b2World* world) : m_maxForwardSpeed(0), m_maxBackwardSpeed(0),
 	m_lastDriveImpulse(0), m_lastLateralFrictionImpulse(0),
 	FixtureUserData(nullptr, FixtureUserDataType::CAR_TIRE)
 {
-	m_currentTraction = 1/PTM;
-	m_currentDrag = 1/PTM;
+	m_currentTraction = 1.0f/PTM;
+	m_currentDrag = 1.0f/PTM;
 
 	b2BodyDef tireBodyDef;
 	tireBodyDef.type = b2_dynamicBody;
@@ -26,7 +26,7 @@ CarTire::CarTire(b2World* world) : m_maxForwardSpeed(0), m_maxBackwardSpeed(0),
 	m_body = world->CreateBody(&tireBodyDef);
 
 	b2PolygonShape polygonShape;
-	polygonShape.SetAsBox(4.0f/PTM, 2.0f/PTM);
+	polygonShape.SetAsBox(2.0f/PTM, 4.0f/PTM);
 	m_body->CreateFixture(&polygonShape, 1.0f);//shape, density
 
 	m_body->SetUserData(this);
@@ -42,26 +42,26 @@ CarTire::~CarTire()
 
 b2Vec2 CarTire::getLateralVelocity()
 {
-      b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(0,1));
+      b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(1.0f,0));
       return b2Dot( currentRightNormal, m_body->GetLinearVelocity()) * currentRightNormal;
 }
 b2Vec2 CarTire::getForwardVelocity()
 {
-    b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(1,0));
+    b2Vec2 currentRightNormal = m_body->GetWorldVector(b2Vec2(0,1.0f));
     return b2Dot( currentRightNormal, m_body->GetLinearVelocity()) * currentRightNormal;
 }
 
 void CarTire::updateFriction()
 {
 	//angular velocity
-	m_body->ApplyAngularImpulse( m_currentTraction * 0.1f * m_body->GetInertia() * -m_body->GetAngularVelocity() );
+	m_body->ApplyAngularImpulse(m_currentTraction * 0.1f * m_body->GetInertia() * -m_body->GetAngularVelocity());
 
 	//forward linear velocity
 	b2Vec2 currentForwardNormal = getForwardVelocity();
 	float currentForwardSpeed = currentForwardNormal.Normalize();
 	float dragForceMagnitude = -0.25 * currentForwardSpeed;
 	dragForceMagnitude *= m_currentDrag;
-	m_body->ApplyForce( m_currentTraction * dragForceMagnitude * currentForwardNormal, m_body->GetWorldCenter() );
+	m_body->ApplyForce(m_currentTraction * dragForceMagnitude * currentForwardNormal, m_body->GetWorldCenter());
 }
 
 void CarTire::setCharacteristics(float maxForwardSpeed, float maxBackwardSpeed, float maxDriveForce, float maxLateralImpulse)
@@ -92,7 +92,7 @@ void CarTire::updateTractionAndDrag()
 	else {
 		//find area with highest traction, same for drag
 		m_currentTraction = 0.1f/PTM;
-		m_currentDrag = 1/PTM;//not zero!
+		m_currentDrag = 1.0f/PTM;//not zero!
 		auto it = m_groundAreas.begin();
 		while (it != m_groundAreas.end()) {
 			GroundAreaFUD* ga = *it;
@@ -121,7 +121,7 @@ void CarTire::updateDrive(int controlState)
 			break;
 	}
 	//find current speed in forward direction
-	b2Vec2 currentForwardNormal = m_body->GetWorldVector( b2Vec2(1,0) );
+	b2Vec2 currentForwardNormal = m_body->GetWorldVector( b2Vec2(0,1) );
 	float currentSpeed = b2Dot( getForwardVelocity(), currentForwardNormal );
 
 	//apply necessary force
@@ -172,10 +172,10 @@ void CarTire::updateTurn(int controlState)
 	switch (controlState & (CarControls::LEFT|CarControls::RIGHT))
 	{
 		case CarControls::LEFT:
-			desiredTorque = 1.0f/PTM;
+			desiredTorque = 2.0f/PTM;
 			break;
 		case CarControls::RIGHT:
-			desiredTorque = -1.0f/PTM;
+			desiredTorque = -2.0f/PTM;
 			break;
 		default: ;//nothing
 	}
