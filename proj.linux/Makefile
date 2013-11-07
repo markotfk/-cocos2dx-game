@@ -11,11 +11,11 @@ SOURCES = main.cpp \
         ../Classes/DebugDraw.cpp
 
 COCOS_ROOT = ../../..
-INCLUDES = -I../Classes -I$(COCOS_ROOT)/cocos2dx/include
+INCLUDES = -I../Classes -I$(COCOS_ROOT)/cocos2dx/
 INCLUDES += -I$(COCOS_ROOT)/CocosDenshion/include
 
 include $(COCOS_ROOT)/cocos2dx/proj.linux/cocos2dx.mk
-SHAREDLIBS += -lcocos2d -lcocosdenshion -lbox2d -lglut
+SHAREDLIBS += -lcocos2d -lcocosdenshion -lbox2d -lglut -lGL -lglfw3 -lGLU -lX11 -lXxf86vm -lXrandr -lpthread -lXi
 COCOS_LIBS = $(LIB_DIR)/libcocos2d.so
 COCOS_LIBS += $(LIB_DIR)/libcocosdenshion.so
 COCOS_LIBS += $(LIB_DIR)/libbox2d.a

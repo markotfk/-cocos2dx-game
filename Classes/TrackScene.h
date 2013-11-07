@@ -17,7 +17,6 @@ class RaceCar;
 class DebugDraw;
 class TMXTiledMap;
 
-
 class TrackScene: public cocos2d::LayerColor {
 public:
 	static cocos2d::Scene* scene();
@@ -34,8 +33,8 @@ public:
 
 	void addTarget();
 	void spriteMoveFinished(cocos2d::Node* sender);
-	void keyPressed(int keyCode);
-	void keyReleased(int keyCode);
+	void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+	void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
 	//void draw();
 private:
 	void addTileMap(const char *tileMapFile);

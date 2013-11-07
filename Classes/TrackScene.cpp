@@ -101,7 +101,8 @@ bool TrackScene::init()
 void TrackScene::addTileMap(const char *tileMapFile)
 {
 	m_tileMap = cocos2d::TMXTiledMap::create(tileMapFile);
-	addChild(m_tileMap, 0, 1);
+	//addChild(m_tileMap, 0, 1);
+	addChild(m_tileMap);
 	Array * pChildrenArray = m_tileMap->getChildren();
 	Object* pObject = NULL;
 	CCARRAY_FOREACH(pChildrenArray, pObject)
@@ -291,7 +292,7 @@ void TrackScene::updateGame(float dt)
 	}
 
 	// Instruct the world to perform a single step of simulation.
-	m_world->Step(dt, 6, 2);
+	m_world->Step(dt, 8, 3);
 
 	// Go through the bodies in world and update sprites
 	for (auto body = m_world->GetBodyList(); body && !m_paused; body = body->GetNext())
@@ -351,47 +352,48 @@ void TrackScene::updateGame(float dt)
 
 }
 
-void TrackScene::keyPressed(int keyCode)
+void TrackScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
 	switch (keyCode)
 	{
-		case KEYCODE_UP:
+		case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			m_controlState |= CarControls::UP;
 			break;
-		case KEYCODE_DOWN:
+		case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			m_controlState |= CarControls::DOWN;
 			break;
-		case KEYCODE_LEFT:
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			m_controlState |= CarControls::LEFT;
 			break;
-		case KEYCODE_RIGHT:
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			m_controlState |= CarControls::RIGHT;
 			break;
 		default:
 			break;
 	}
-};
 
-void TrackScene::keyReleased(int keyCode)
+}
+
+void TrackScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 {
 	switch (keyCode)
 		{
-		case KEYCODE_UP:
+		case EventKeyboard::KeyCode::KEY_UP_ARROW:
 			m_controlState &= ~CarControls::UP;
 			break;
-		case KEYCODE_DOWN:
+		case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			m_controlState &= ~CarControls::DOWN;
 			break;
-		case KEYCODE_LEFT:
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			m_controlState &= ~CarControls::LEFT;
 			break;
-		case KEYCODE_RIGHT:
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			m_controlState &= ~CarControls::RIGHT;
 			break;
-		case 'P':
+		case EventKeyboard::KeyCode::KEY_P:
 			m_paused = !m_paused;
 			break;
-		case 'Q':
+		case EventKeyboard::KeyCode::KEY_Q:
 			exitApp();
 			break;
 		default:
